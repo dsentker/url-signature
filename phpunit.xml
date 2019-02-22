@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit backupGlobals="false"
+         convertErrorsToExceptions="true"
+         convertWarningsToExceptions="true"
+         convertNoticesToExceptions="true"
+         bootstrap="tests/autoload.php"
+         verbose="true"
+         colors="true">
+    <testsuites>
+        <testsuite name="HashedUri">
+            <directory>./tests</directory>
+            <exclude>./tests/Utility</exclude>
+        </testsuite>
+    </testsuites>
+    <filter>
+        <whitelist>
+            <directory suffix=".php">./src</directory>
+        </whitelist>
+    </filter>
+</phpunit>

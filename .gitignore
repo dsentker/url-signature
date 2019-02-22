@@ -1,0 +1,6 @@
+composer.phar
+/vendor/
+.idea
+*.iml
+Thumbs.db
+*.lnk
