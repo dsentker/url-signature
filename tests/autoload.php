@@ -1,4 +1,5 @@
-<?php
+<?php /** @noinspection PhpIncludeInspection */
+
 /** @var \Composer\Autoload\ClassLoader $classLoader */
-$classLoader = include './vendor/autoload.php';
+$classLoader = require realpath(__DIR__ . 'x/../vendor/autoload.php');
 $classLoader->addPsr4('UrlSignatureTest\\Utility\\', 'tests/Utility');

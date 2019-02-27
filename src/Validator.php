@@ -51,7 +51,6 @@ class Validator extends SignatureGenerator
      */
     public function verify(string $url)
     {
-
         $urlComponents = parse($url);
         $query = $urlComponents['query'];
         $queryParts = QueryString::getKeyValuePairs($query);
