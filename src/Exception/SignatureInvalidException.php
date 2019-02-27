@@ -1,6 +1,6 @@
 <?php
-namespace HashedUri\Exception;
 
+namespace UrlSignature\Exception;
 
 class SignatureInvalidException extends ValidationException
 {

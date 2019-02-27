@@ -6,7 +6,7 @@
  * Time: 13:59
  */
 
-namespace HashedUri;
+namespace UrlSignature;
 
 
 use function League\Uri\build;
@@ -28,7 +28,7 @@ abstract class SignatureGenerator
         $configuration = $this->getConfiguration();
         $hashData = build($this->getHashDataFromUri($urlComponents));
 
-        $this->lastHashedUrl; // for debugging purposes
+        #$this->lastHashedUrl; // for debugging purposes
 
         return hash_hmac($configuration->getAlgorithm(), $hashData, $configuration->getKey());
     }

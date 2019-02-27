@@ -1,21 +1,14 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Daniel
- * Date: 21.02.2019
- * Time: 11:56
- */
 
-namespace HashedUriTest;
+namespace UrlSignatureTest;
 
-use HashedUri\Exception\ConfigurationException;
+use UrlSignature\Exception\ConfigurationException;
 use PHPUnit\Framework\TestCase;
-use HashedUriTest\Utility\HashConfigFactory;
-use HashedUri\HashConfiguration;
+use UrlSignatureTest\Utility\HashConfigFactory;
+use UrlSignature\HashConfiguration;
 
 class HashConfigTest extends TestCase
 {
-
 
     public function testGetAlgorithm()
     {
@@ -46,7 +39,7 @@ class HashConfigTest extends TestCase
     public function testHashConfigWithBit1()
     {
         $config = HashConfigFactory::createSimpleConfiguration();
-        $config->setHashConfig(HashConfiguration::FLAG_HASH_SCHEME);
+        $config->setHashMask(HashConfiguration::FLAG_HASH_SCHEME);
         $this->assertTrue($config->hasHashConfigFlag(HashConfiguration::FLAG_HASH_SCHEME));
 
         foreach([4, 8, 0] as $flag) {
@@ -57,7 +50,7 @@ class HashConfigTest extends TestCase
     public function testHashConfigWithBit16()
     {
         $config = HashConfigFactory::createSimpleConfiguration();
-        $config->setHashConfig(HashConfiguration::FLAG_HASH_QUERY);
+        $config->setHashMask(HashConfiguration::FLAG_HASH_QUERY);
         $this->assertTrue($config->hasHashConfigFlag(HashConfiguration::FLAG_HASH_QUERY));
 
         foreach([4, 8, 0] as $flag) {
@@ -69,6 +62,28 @@ class HashConfigTest extends TestCase
     {
         $this->expectException(ConfigurationException::class);
         $config = new HashConfiguration('42', 'key', 'key');
+    }
+
+    public function testAlgorithmSetAndGet()
+    {
+        // As we not know the registered algorithms on this platforms, we use the first available.
+        $registeredAlgos = hash_hmac_algos ();
+        if(empty($registeredAlgos)) {
+            $this->markTestSkipped('No hash algorithm available on this platform.');
+        }
+
+        $algo = $registeredAlgos[0];
+        $config = HashConfigFactory::createSimpleConfiguration();
+        $config->setAlgorithm($algo);
+        $this->assertEquals($algo, $config->getAlgorithm());
+
+    }
+
+    public function testExceptionOnNonExistentAlgorithm()
+    {
+        $this->expectException(ConfigurationException::class);
+        $config = HashConfigFactory::createSimpleConfiguration();
+        $config->setAlgorithm('I-Am-An-Nonexistent-Hash-Algorithm');
     }
 
 

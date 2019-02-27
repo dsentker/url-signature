@@ -6,7 +6,7 @@
  * Time: 12:13
  */
 
-namespace HashedUriTest\Utility;
+namespace UrlSignatureTest\Utility;
 
 
 class ExtractionFailed extends \Exception

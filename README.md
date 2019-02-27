@@ -1,6 +1,6 @@
-## HashedUri  
+## UrlSignature  
 
-**Sign URLs to prevent modification**
+**Create URLs with a signature to prevent modification**
 
 This small PHP >7.1 library allows developers to build urls with a hash to prevent the modification of URL parts.   
 
@@ -11,7 +11,7 @@ This signature value is built using the contents of the current URL along with a
 
 ## Installation
 Installing via [Composer](https://getcomposer.org) is simple:
-`composer require dsentker/hashed-uri`  (WIP!)
+`composer require dsentker/url-signature`  (WIP!)
 
 ## Usage
 To sign (or validate) URLs, a key is required (which is of course secret). The key is used to hash special parts* of the URL and attach them as a signature in the query string of the URL.
@@ -24,13 +24,13 @@ Later, on validation, the same key is used to hash the current URL. This hash is
 <?php
 require_once 'vendor/autoload.php';
 
-use HashedUri\Builder;
-use HashedUri\HashConfiguration;
+use UrlSignature\Builder;
+use UrlSignature\HashConfiguration;
 
 // Secret is loaded from a configuration outside of the library
 $configuration = new HashConfiguration($_ENV['SECRET']);
 $builder = new Builder($configuration);
-$url = $builder->hashUrl('http://example.com/foo?bar=42'); // http://example.com?foo?bar=42&_signature=90b7ac1...
+$url = $builder->signUrl('http://example.com/foo?bar=42'); // http://example.com?foo?bar=42&_signature=90b7ac1...
 ```
 
 In this example we've created a new `Builder` instance with a configuration object, and using it to create the URL based on the data and URL provided. The `$url` result has the signature (the hash) value appended to the query string.
@@ -41,13 +41,12 @@ The other half of the equation is the verification of a URL. The library provide
 
 ```php
 <?php
-use HashedUri\Validator;
+use UrlSignature\Validator;
 $validator = new Validator($configuration); // Use the same $configuration here
 var_dump($validator->isValid('http://example.com?foo=this+is+a+test&_signature=90b7ac1...')); // returns true or false, depending on the signature
 
 // If you want to catch Exceptions to determine the cause of an invalid URL, use Validator::verify() instead
-$validator->verify('http://example.com?foo=this+is+a+test&_signature=90b7ac1...'); // Returns true or a \HashedUri\Exception\ValidationException.
-
+$validator->verify('http://example.com?foo=this+is+a+test&_signature=90b7ac1...'); // Returns true or a \UrlSignature\Exception\ValidationException.
 ```
 
 `Validator::isValid($url)` returns a boolean value based on the validation result, nothing more.
@@ -62,7 +61,7 @@ The library also provides the ability to create URLs that will fail validation b
 ```php
 <?php
 $builder = new Builder($configuration);
-$url = $builder->hashUrl('http://example.com/foo?bar=42', '+10 minutes');
+$url = $builder->signUrl('http://example.com/foo?bar=42', '+10 minutes');
 
 // https://example.com?foo=bar&_expires=1521661473&_signature=009e2d70...
 ```
@@ -78,25 +77,26 @@ The URL query keys "_expires" and "_signature" can be modified with the configur
 <?php
 $querySignatureName = '_hash';
 $queryExpiresName = 'ttl';
-$configuration = new \HashedUri\HashConfiguration('my-secret-key', $querySignatureName, $queryExpiresName);
-$hashedUrl = (new Builder($configuration))->hashUrl('https://example.com/?id=1234', new \DateTime('MONDAY NEXT WEEK'));
+$configuration = new \UrlSignature\HashConfiguration('my-secret-key', $querySignatureName, $queryExpiresName);
+$hashedUrl = (new Builder($configuration))->signUrl('https://example.com/?id=1234', new \DateTime('MONDAY NEXT WEEK'));
 var_dump($hashedUrl); // https://example.com/?id=1234&ttl=123456789&_hash=009e2d70...
 ```
-#### Control what parts of URL to hash
+#### Control what parts of URL to sign
 Per default, the following parts of the URL are considered for hash generation:
 * Host (example.com)
 * Path (/foo/bar)
 * Query String (?qux=baz)
 
-The configuration allows to modify these components with Bitmask Contants. Use `HashConfiguration::setHashConfig()` to pass the Flags  (use the pipe | to join flags).
+The configuration allows to modify these components with Bitmask Contants. Use `HashConfiguration::setHashMask()` to pass the Flags  (use the pipe | to join flags).
 
 For example, consider to add the URL scheme to the hashing process. That means that the validation of an URL fails only if the protocols (https <-> http) has changed.
 
 ```php
 <?php
+use UrlSignature\HashConfiguration;
 $config = new HashConfiguration('secret');
 // Complete example: Use *ALL* parts of the URL for hashing
-$config->setHashConfig(
+$config->setHashMask(
             HashConfiguration::FLAG_HASH_SCHEME
             | HashConfiguration::FLAG_HASH_HOST
             | HashConfiguration::FLAG_HASH_PORT
@@ -106,17 +106,27 @@ $config->setHashConfig(
         );
 ```
 
+## A Word about Security ##
+This library creates a hash from one or more URL parts. That means, that the URL is only valid if the given signature matches the current signature. Like any other hash event (for example, hashing passwords), this is considered quite secure. For a signed URL to be truly secure, the developer must ensure that (when receiving a request) a check is made as to whether a hash check is required and / or whether the submitted signature is correct. In other words, **if the user has the ability to retrieve a URL without a signature, the best hashing algorithm will not work**.
+
+### Do NOT use this library if... ###
+* ...you are unsure whether the processing part of the request (e.g., the controller) can check the hash at any time.
+* ...your goal is to prevent the distribution of URLs to unauthorized persons (that is not the purpose of this library!)
+* ...this library is the only auditing mechanism designed to prevent a user from retrieving content that is not intended for them.
+
 ## Credits
-Based on the ideas by [psecio](https://github.com/psecio), the project was forked by [dsentker](https://github.com/dsentker) (thats me 😁) to upgrade the code for PHP 7.x applications and many other improvements. The implementation of a Symfony Bundle is planned.
+Based on the ideas by [psecio](https://github.com/psecio), the project was forked by [dsentker](https://github.com/dsentker) (thats me 😁) to upgrade the code for PHP 7.x applications. The adjustments then resulted in a separate library (this one). The implementation of a Symfony Bundle is planned.
+
+## Dependencies
+The library uses the URL functions of [thephpleague/uri](https://github.com/thephpleague/uri) to parse, extract and (re-)build URL components. For unit tests, PhpUnit is used. 
 
 ## Submitting bugs and feature requests
 Bugs and feature request are tracked on GitHub.
 
 ## TODO
-* Rename `HashConfiguration::setHashConfig()` method to a more meaningful name
-* Make a small symfony bundle to use this with Twig and the request object.  
+- [ ] Make a small symfony bundle to use this with Twig and the request object. (WIP)  
 
 ## Testing
-`./vendor/bin/phpunit tests`
+`./vendor/bin/phpunit`
 
-Do not be surprised about a short break of two seconds during the tests. A sleep(2) was built in to test for the validation of the timeout functionality.
+Do not be surprised about a short break of two seconds during the tests. A `sleep(2)` was built in to test for the validation of the timeout functionality.

@@ -6,7 +6,7 @@
  * Time: 13:08
  */
 
-namespace HashedUri;
+namespace UrlSignature;
 
 use League\Uri\Parser\QueryString as LeagueQueryString;
 
@@ -26,7 +26,7 @@ use League\Uri\Parser\QueryString as LeagueQueryString;
  *      'key2' => 'value2'
  * ]
  *
- * @package HashedUri
+ * @package UrlSignature
  */
 class QueryString
 {

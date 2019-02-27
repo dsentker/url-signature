@@ -6,7 +6,7 @@
  * Time: 15:34
  */
 
-namespace HashedUriTest\Utility;
+namespace UrlSignatureTest\Utility;
 
 
 class SampleUrlHashes

@@ -1,16 +1,10 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Daniel
- * Date: 22.02.2019
- * Time: 12:35
- */
-namespace HashedUri;
+namespace UrlSignature;
 
-use HashedUri\Exception\SignatureExpiredException;
-use HashedUri\Exception\SignatureInvalidException;
-use HashedUri\Exception\SignatureNotFoundException;
-use HashedUri\Exception\ValidationException;
+use UrlSignature\Exception\SignatureExpiredException;
+use UrlSignature\Exception\SignatureInvalidException;
+use UrlSignature\Exception\SignatureNotFoundException;
+use UrlSignature\Exception\ValidationException;
 use function League\Uri\parse;
 
 class Validator extends SignatureGenerator
@@ -45,6 +39,15 @@ class Validator extends SignatureGenerator
         return true;
     }
 
+    /**
+     * @param string $url
+     *
+     * @return bool
+     *
+     * @throws SignatureExpiredException
+     * @throws SignatureInvalidException
+     * @throws SignatureNotFoundException
+     */
     public function verify(string $url)
     {
 

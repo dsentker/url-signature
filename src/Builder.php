@@ -6,9 +6,9 @@
  * Time: 10:54
  */
 
-namespace HashedUri;
+namespace UrlSignature;
 
-use HashedUri\Exception\TimeoutException;
+use UrlSignature\Exception\TimeoutException;
 use function League\Uri\parse;
 use function League\Uri\build;
 
@@ -29,7 +29,7 @@ class Builder extends SignatureGenerator
     }
 
 
-    public function hashUrl(string $url, $timeout = null)
+    public function signUrl(string $url, $timeout = null)
     {
 
         $urlComponents = parse($url);

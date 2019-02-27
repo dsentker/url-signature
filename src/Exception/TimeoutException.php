@@ -1,15 +1,8 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Daniel
- * Date: 21.02.2019
- * Time: 11:31
- */
 
-namespace HashedUri\Exception;
+namespace UrlSignature\Exception;
 
-
-class TimeoutException extends HashedUriException
+class TimeoutException extends UrlSignatureException
 {
     public static function notParsable()
     {

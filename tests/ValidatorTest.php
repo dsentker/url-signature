@@ -1,22 +1,22 @@
 <?php
 
-namespace HashedUriTest;
+namespace UrlSignatureTest;
 
-use HashedUri\Builder;
-use HashedUri\Exception\HashedUriException;
-use HashedUri\Exception\SignatureExpiredException;
-use HashedUri\Exception\SignatureInvalidException;
-use HashedUri\Exception\SignatureNotFoundException;
-use HashedUri\Exception\TimeoutException;
-use HashedUri\QueryString;
-use HashedUri\Validator;
-use HashedUriTest\Utility\ExtractionFailed;
-use HashedUriTest\Utility\SampleUrlHashes;
+use UrlSignature\Builder;
+use UrlSignature\Exception\UrlSignatureException;
+use UrlSignature\Exception\SignatureExpiredException;
+use UrlSignature\Exception\SignatureInvalidException;
+use UrlSignature\Exception\SignatureNotFoundException;
+use UrlSignature\Exception\TimeoutException;
+use UrlSignature\QueryString;
+use UrlSignature\Validator;
+use UrlSignatureTest\Utility\ExtractionFailed;
+use UrlSignatureTest\Utility\SampleUrlHashes;
 use function League\Uri\build;
 use function League\Uri\parse;
 use PHPUnit\Framework\TestCase;
-use HashedUriTest\Utility\HashConfigFactory;
-use HashedUri\HashConfiguration;
+use UrlSignatureTest\Utility\HashConfigFactory;
+use UrlSignature\HashConfiguration;
 
 class ValidatorTest extends TestCase
 {
@@ -69,7 +69,7 @@ class ValidatorTest extends TestCase
         $this->expectException(SignatureExpiredException::class);
 
         $builder = new Builder(HashConfigFactory::createSimpleConfiguration());
-        $hashedUrl = $builder->hashUrl('http://example.com/foo', '+1 seconds');
+        $hashedUrl = $builder->signUrl('http://example.com/foo', '+1 seconds');
         sleep(2); // sorry for that.
         $builder->createValidator()->verify($hashedUrl);
 

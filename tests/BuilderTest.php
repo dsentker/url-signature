@@ -4,20 +4,20 @@
  * @noinspection PhpDocSignatureInspection  As PhpUnit expects a namespaced string scalar in PhpStorm
  */
 
-namespace HashedUriTest;
+namespace UrlSignatureTest;
 
-use HashedUri\Builder;
-use HashedUri\Exception\TimeoutException;
-use HashedUriTest\Utility\ExtractionFailed;
-use HashedUriTest\Utility\UrlQueryExtractor;
+use UrlSignature\Builder;
+use UrlSignature\Exception\TimeoutException;
+use UrlSignatureTest\Utility\ExtractionFailed;
+use UrlSignatureTest\Utility\UrlQueryExtractor;
+use UrlSignatureTest\Utility\HashConfigFactory;
+use UrlSignature\HashConfiguration;
 use PHPUnit\Framework\TestCase;
-use HashedUriTest\Utility\HashConfigFactory;
-use HashedUri\HashConfiguration;
 
 /**
  * Class BuilderTest
  *
- * @package HashedUriTest
+ * @package UrlSignatureTest
  */
 class BuilderTest extends TestCase
 {
@@ -49,28 +49,28 @@ class BuilderTest extends TestCase
     public function testHostExistsInUrl()
     {
         $url = 'https://www.example.com';
-        $hashedUrl = $this->builder->hashUrl($url);
+        $hashedUrl = $this->builder->signUrl($url);
         $this->assertRegExp('#^https://www.example.com#', $hashedUrl);
     }
 
     public function testFragmentExistsInUrl()
     {
         $url = 'https://www.example.com/foo/#fragment';
-        $hashedUrl = $this->builder->hashUrl($url);
+        $hashedUrl = $this->builder->signUrl($url);
         $this->assertRegExp('+#fragment$+', $hashedUrl);
     }
 
     public function testOriginalQueryStringIsKept()
     {
         $url = 'https://www.example.com/?foo=bar&qux=1234';
-        $hashedUrl = $this->builder->hashUrl($url);
+        $hashedUrl = $this->builder->signUrl($url);
         $this->assertRegExp('+\?foo=bar&qux=1234+', $hashedUrl);
     }
 
     public function testQueryStringContainsSignature()
     {
         $url = 'https://www.example.com/?foo=bar&qux=1234';
-        $hashedUrl = $this->builder->hashUrl($url);
+        $hashedUrl = $this->builder->signUrl($url);
 
         // Assuming a Sha256 hash is used (consists of 64 hex characters)
         $expectedPattern = sprintf('~%s=[A-Fa-f0-9]{64}~', $this->builder->getConfiguration()->getSignatureUrlKey());
@@ -88,10 +88,10 @@ class BuilderTest extends TestCase
         // Create a new config to prevent mismatch due to external changes on the utility configuration object.
         $config = new HashConfiguration('secure-key');
         $config->setAlgorithm('SHA256');
-        $config->setHashConfig(HashConfiguration::FLAG_HASH_PATH | HashConfiguration::FLAG_HASH_QUERY);
+        $config->setHashMask(HashConfiguration::FLAG_HASH_PATH | HashConfiguration::FLAG_HASH_QUERY);
         $builder = new Builder($config);
         $url = sprintf('https://example.com%s', $pathAndQuery);
-        $hashedUrl = $builder->hashUrl($url);
+        $hashedUrl = $builder->signUrl($url);
 
         $expectedPattern = sprintf('~%s=%s~', $builder->getConfiguration()->getSignatureUrlKey(), $expectedHash);
 
@@ -106,7 +106,7 @@ class BuilderTest extends TestCase
     public function testHashUrlFromInvalidUrl()
     {
         $url = 'goose@fraba.de';
-        $hashedUrl = $this->builder->hashUrl($url);
+        $hashedUrl = $this->builder->signUrl($url);
         $this->assertRegExp('~^goose@fraba.de~', $hashedUrl);
 
     }
@@ -116,9 +116,9 @@ class BuilderTest extends TestCase
         // Create a new config to prevent mismatch due to external changes on the utility configuration object.
         $config = new HashConfiguration('secure-key');
         $config->setAlgorithm('SHA256');
-        $config->setHashConfig(HashConfiguration::FLAG_HASH_HOST | HashConfiguration::FLAG_HASH_PATH); // check host with path
+        $config->setHashMask(HashConfiguration::FLAG_HASH_HOST | HashConfiguration::FLAG_HASH_PATH); // check host with path
         $builder = new Builder($config);
-        $hashedUrl = $builder->hashUrl('/foo/bar?baz'); // host is missing
+        $hashedUrl = $builder->signUrl('/foo/bar?baz'); // host is missing
 
         $this->assertRegExp('#^\/foo\/bar\?baz#', $hashedUrl);
 
@@ -126,7 +126,7 @@ class BuilderTest extends TestCase
 
     public function testEmptyUrl()
     {
-        $hashedUrl = $this->builder->hashUrl('/'); // no host, no path, no query
+        $hashedUrl = $this->builder->signUrl('/'); // no host, no path, no query
         $this->assertRegExp(sprintf('#^\/\?%s=#', $this->builder->getConfiguration()->getSignatureUrlKey()), $hashedUrl);
 
     }
@@ -136,7 +136,7 @@ class BuilderTest extends TestCase
      */
     public function testValidTimeOut($timeout, int $expected)
     {
-        $hashedUrl = $this->builder->hashUrl('/', $timeout);
+        $hashedUrl = $this->builder->signUrl('/', $timeout);
 
         try {
             $timeout = UrlQueryExtractor::extractTimeoutFormUrl($this->builder->getConfiguration(), $hashedUrl);
@@ -157,12 +157,12 @@ class BuilderTest extends TestCase
     public function testInvalidTimeOut($timeoutValue)
     {
         $this->expectException(TimeoutException::class);
-        $hashedUrl = $this->builder->hashUrl('/', $timeoutValue);
+        $hashedUrl = $this->builder->signUrl('/', $timeoutValue);
     }
 
     public function testModifiedSignature()
     {
-        $hashedUrl = $this->builder->hashUrl('/foo', '+42 seconds');
+        $hashedUrl = $this->builder->signUrl('/foo', '+42 seconds');
         $originalSignature = UrlQueryExtractor::extractSignatureFormUrl($this->builder->getConfiguration(), $hashedUrl);
         $originalTimeout = UrlQueryExtractor::extractTimeoutFormUrl($this->builder->getConfiguration(), $hashedUrl);
 
@@ -176,12 +176,12 @@ class BuilderTest extends TestCase
 
     public function testModifiedSignatureAndTimeout()
     {
-        $hashedUrl = $this->builder->hashUrl('/foo', '+42 seconds');
+        $hashedUrl = $this->builder->signUrl('/foo', '+42 seconds');
         $originalSignature = UrlQueryExtractor::extractSignatureFormUrl($this->builder->getConfiguration(), $hashedUrl);
         $originalTimeout = UrlQueryExtractor::extractTimeoutFormUrl($this->builder->getConfiguration(), $hashedUrl);
 
         // Hash URL again with updated timeout
-        $updatedHashedUrl = $this->builder->hashUrl($hashedUrl, '+10 minutes');
+        $updatedHashedUrl = $this->builder->signUrl($hashedUrl, '+10 minutes');
         $updatedSignature = UrlQueryExtractor::extractSignatureFormUrl($this->builder->getConfiguration(), $updatedHashedUrl);
         $updatedTimeout = UrlQueryExtractor::extractTimeoutFormUrl($this->builder->getConfiguration(), $updatedHashedUrl);
 
@@ -191,9 +191,9 @@ class BuilderTest extends TestCase
 
     public function testSignatureIsSameOnDifferentProtocols()
     {
-        $hashedUrlWithHttp = $this->builder->hashUrl('http://www.example.com/foo');
+        $hashedUrlWithHttp = $this->builder->signUrl('http://www.example.com/foo');
         $httpSignature = UrlQueryExtractor::extractSignatureFormUrl($this->builder->getConfiguration(), $hashedUrlWithHttp);
-        $hashedUrlWithHttps = $this->builder->hashUrl('https://www.example.com/foo');
+        $hashedUrlWithHttps = $this->builder->signUrl('https://www.example.com/foo');
         $httpsSignature = UrlQueryExtractor::extractSignatureFormUrl($this->builder->getConfiguration(), $hashedUrlWithHttps);
 
         $this->assertEquals($httpSignature, $httpsSignature);
@@ -204,12 +204,12 @@ class BuilderTest extends TestCase
     {
 
         $config = HashConfigFactory::createSimpleConfiguration();
-        $config->setHashConfig(HashConfiguration::FLAG_HASH_SCHEME | HashConfiguration::FLAG_HASH_PATH);
+        $config->setHashMask(HashConfiguration::FLAG_HASH_SCHEME | HashConfiguration::FLAG_HASH_PATH);
         $builder = new Builder($config);
 
-        $hashedUrlWithHttp = $builder->hashUrl('http://www.example.com/foo');
+        $hashedUrlWithHttp = $builder->signUrl('http://www.example.com/foo');
         $httpSignature = UrlQueryExtractor::extractSignatureFormUrl($this->builder->getConfiguration(), $hashedUrlWithHttp);
-        $hashedUrlWithHttps = $builder->hashUrl('https://www.example.com/foo');
+        $hashedUrlWithHttps = $builder->signUrl('https://www.example.com/foo');
         $httpsSignature = UrlQueryExtractor::extractSignatureFormUrl($this->builder->getConfiguration(), $hashedUrlWithHttps);
 
         $this->assertNotEquals($httpSignature, $httpsSignature);

@@ -6,10 +6,10 @@
  * Time: 11:01
  */
 
-namespace HashedUri;
+namespace UrlSignature;
 
 
-use HashedUri\Exception\ConfigurationException;
+use UrlSignature\Exception\ConfigurationException;
 
 class HashConfiguration
 {
@@ -36,7 +36,7 @@ class HashConfiguration
     private $timeoutUrlKey;
 
     /** @var int */
-    private $hashConfig = self::FLAG_HASH_HOST | self::FLAG_HASH_PATH | self::FLAG_HASH_QUERY;
+    private $hashMask = self::FLAG_HASH_HOST | self::FLAG_HASH_PATH | self::FLAG_HASH_QUERY;
 
     /**
      * Current hashing algorithm
@@ -127,17 +127,17 @@ class HashConfiguration
     /**
      * @return int
      */
-    public function getHashConfig(): int
+    public function getHashMask(): int
     {
-        return $this->hashConfig;
+        return $this->hashMask;
     }
 
     /**
-     * @param int $hashConfig
+     * @param int $hashMask
      */
-    public function setHashConfig(int $hashConfig)
+    public function setHashMask(int $hashMask)
     {
-        $this->hashConfig = $hashConfig;
+        $this->hashMask = $hashMask;
     }
 
     /**
@@ -147,7 +147,7 @@ class HashConfiguration
      */
     public function hasHashConfigFlag(int $configFlag)
     {
-        return (bool) ($this->hashConfig & $configFlag);
+        return (bool) ($this->hashMask & $configFlag);
     }
 
     /**
@@ -163,6 +163,14 @@ class HashConfiguration
      */
     public function setAlgorithm(string $algorithm): void
     {
+
+        $registeredAlgos = hash_hmac_algos();
+
+        // TODO Are there platforms where the algorithms are capitalized?
+        if(!in_array(strtolower($algorithm), $registeredAlgos, true)) {
+            throw ConfigurationException::invalidAlgorithm($algorithm, $registeredAlgos);
+        }
+
         $this->algorithm = $algorithm;
     }
 

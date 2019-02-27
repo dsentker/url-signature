@@ -1,12 +1,6 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Daniel
- * Date: 22.02.2019
- * Time: 13:51
- */
 
-namespace HashedUri\Exception;
+namespace UrlSignature\Exception;
 
 class SignatureExpiredException extends ValidationException
 {

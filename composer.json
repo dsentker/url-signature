@@ -1,9 +1,9 @@
 {
-    "name":"dsentker/hashed-uri",
+    "name":"dsentker/url-signature",
     "type":"library",
     "description":"A secure URI generation and validation library",
-    "keywords":["uri", "generate", "validate"],
-    "homepage":"https://github.com/dsentker/hashed-uri",
+    "keywords":["uri", "signature", "build", "validate"],
+    "homepage":"https://github.com/dsentker/url-signature",
     "license":"MIT",
     "authors":[
         {
@@ -21,13 +21,13 @@
     },
     "autoload": {
         "psr-4": {
-            "HashedUri\\": "src/",
+            "UrlSignature\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-0": {
-            "HashedUriTest\\": "tests/",
-            "HashedUriTest\\Utility\\": "tests/Utility"
+            "UrlSignatureTest\\": "tests/",
+            "UrlSignatureTest\\Utility\\": "tests/Utility"
         }
     }
 }

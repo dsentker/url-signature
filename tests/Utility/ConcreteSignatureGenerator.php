@@ -6,10 +6,10 @@
  * Time: 14:58
  */
 
-namespace HashedUriTest\Utility;
+namespace UrlSignatureTest\Utility;
 
-use HashedUri\HashConfiguration;
-use HashedUri\SignatureGenerator;
+use UrlSignature\HashConfiguration;
+use UrlSignature\SignatureGenerator;
 use function League\Uri\parse;
 
 class ConcreteSignatureGenerator extends SignatureGenerator
@@ -20,7 +20,7 @@ class ConcreteSignatureGenerator extends SignatureGenerator
     public function getConfiguration(): HashConfiguration
     {
         $config = new HashConfiguration(static::KEY);
-        $config->setHashConfig(
+        $config->setHashMask(
             HashConfiguration::FLAG_HASH_SCHEME
             | HashConfiguration::FLAG_HASH_HOST
             | HashConfiguration::FLAG_HASH_PORT

@@ -6,9 +6,9 @@
  * Time: 12:33
  */
 
-namespace HashedUriTest\Utility;
+namespace UrlSignatureTest\Utility;
 
-use HashedUri\HashConfiguration;
+use UrlSignature\HashConfiguration;
 
 class HashConfigFactory
 {
@@ -33,7 +33,7 @@ class HashConfigFactory
     public static function createAdvancedConfigurationWithFullHashFlags()
     {
         $config = static::createSimpleConfiguration();
-        $config->setHashConfig(HashConfiguration::FLAG_HASH_SCHEME
+        $config->setHashMask(HashConfiguration::FLAG_HASH_SCHEME
             | HashConfiguration::FLAG_HASH_HOST
             | HashConfiguration::FLAG_HASH_PORT
             | HashConfiguration::FLAG_HASH_PATH

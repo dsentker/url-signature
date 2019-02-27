@@ -6,9 +6,9 @@
  * Time: 14:37
  */
 
-namespace HashedUriTest\Utility;
+namespace UrlSignatureTest\Utility;
 
-use HashedUri\HashConfiguration;
+use UrlSignature\HashConfiguration;
 
 class UrlQueryExtractor
 {
