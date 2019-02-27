@@ -21,8 +21,18 @@ use PHPUnit\Framework\TestCase;
  */
 class BuilderTest extends TestCase
 {
+
+    const TIMEZONE = 'Europe/Berlin';
+
     /** @var Builder */
     private $builder;
+
+    public function __construct(?string $name = null, array $data = [], string $dataName = '')
+    {
+        parent::__construct($name, $data, $dataName);
+        date_default_timezone_set(static::TIMEZONE);
+    }
+
 
     protected function setUp()
     {
@@ -225,7 +235,7 @@ class BuilderTest extends TestCase
     public function getValidTimeoutValues()
     {
         return [
-            [new \DateTime('10.10.2035 10:10:10', new \DateTimeZone('Europe/Berlin')), 2075616610], // DateTime Object
+            [new \DateTime('10.10.2035 10:10:10', new \DateTimeZone(static::TIMEZONE)), 2075616610], // DateTime Object
             ['10.10.2035 10:10:10', 2075616610],                // strtotime()
             [1893492672, 1893492672],                           // native integer
         ];

@@ -2,7 +2,7 @@
 
 **Create URLs with a signature to prevent modification**
 
-This small PHP >7.1 library allows developers to build urls with a hash to prevent the modification of URL parts.   
+This small PHP >7.2.0 library allows developers to build urls with a hash to prevent the modification of URL parts.   
 
 ## Why?
 A common attack method that pentesters and actual attackers will use is to capture a URL with "id" values in it (like `/user/view?id=1234`) and manually change this value to try to bypass authorization checks. While an application should always have some kind of auth check when the URL is called, there's another step that can help to prevent URL changes: a signature value.
