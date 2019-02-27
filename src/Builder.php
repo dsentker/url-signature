@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Daniel
- * Date: 21.02.2019
- * Time: 10:54
- */
 
 namespace UrlSignature;
 

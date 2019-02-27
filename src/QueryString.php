@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Daniel
- * Date: 21.02.2019
- * Time: 13:08
- */
 
 namespace UrlSignature;
 
@@ -39,13 +33,13 @@ class QueryString
     public static function getKeyValuePairs(?string $query)
     {
 
-        if(empty($query)) {
+        if (empty($query)) {
             return [];
         }
 
         $keyValuePairs = [];
         $pairs = LeagueQueryString::parse($query);
-        foreach($pairs as $pair) {
+        foreach ($pairs as $pair) {
             list($key, $value) = $pair;
             $keyValuePairs[$key] = $value;
         }
@@ -61,14 +55,13 @@ class QueryString
     public static function build(array $keyValuePairs)
     {
         $pairs = [];
-        foreach($keyValuePairs as $key => $value) {
+        foreach ($keyValuePairs as $key => $value) {
             $pairs[] = [$key, $value];
         }
 
         /** @noinspection PhpParamsInspection */
         return LeagueQueryString::build($pairs);
     }
-
 
 
 }

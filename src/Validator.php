@@ -1,4 +1,5 @@
 <?php
+
 namespace UrlSignature;
 
 use UrlSignature\Exception\SignatureExpiredException;
@@ -32,7 +33,7 @@ class Validator extends SignatureGenerator
     {
         try {
             $this->verify($url);
-        } catch(ValidationException $e) {
+        } catch (ValidationException $e) {
             return false;
         }
 
@@ -55,20 +56,20 @@ class Validator extends SignatureGenerator
         $query = $urlComponents['query'];
         $queryParts = QueryString::getKeyValuePairs($query);
 
-        if(!array_key_exists($this->config->getSignatureUrlKey(), $queryParts)) {
+        if (!array_key_exists($this->config->getSignatureUrlKey(), $queryParts)) {
             throw SignatureNotFoundException::notPresetInQueryString($query);
         }
 
         // Validate timeout
-        if(array_key_exists($this->config->getTimeoutUrlKey(), $queryParts)) {
+        if (array_key_exists($this->config->getTimeoutUrlKey(), $queryParts)) {
             $urlTimeout = $queryParts[$this->config->getTimeoutUrlKey()];
-            if($urlTimeout < time()) {
+            if ($urlTimeout < time()) {
                 throw SignatureExpiredException::timeoutViolation();
             }
         }
 
-        $signatureHash = (string) $queryParts[$this->config->getSignatureUrlKey()]; // Cast to string in case of NULL
-        if(empty($signatureHash)) {
+        $signatureHash = (string)$queryParts[$this->config->getSignatureUrlKey()]; // Cast to string in case of NULL
+        if (empty($signatureHash)) {
             throw SignatureInvalidException::emptySignature($signatureHash);
         }
 

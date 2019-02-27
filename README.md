@@ -11,7 +11,9 @@ This signature value is built using the contents of the current URL along with a
 
 ## Installation
 Installing via [Composer](https://getcomposer.org) is simple:
-`composer require dsentker/url-signature`  (WIP!)
+`composer require dsentker/url-signature`
+
+If you not like composer, you can download this repository files and use any PSR-4-Autoloader to get everything loaded. 
 
 ## Usage
 To sign (or validate) URLs, a key is required (which is of course secret). The key is used to hash special parts* of the URL and attach them as a signature in the query string of the URL.

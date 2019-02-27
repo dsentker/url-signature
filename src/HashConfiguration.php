@@ -1,13 +1,6 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Daniel
- * Date: 21.02.2019
- * Time: 11:01
- */
 
 namespace UrlSignature;
-
 
 use UrlSignature\Exception\ConfigurationException;
 
@@ -55,7 +48,7 @@ class HashConfiguration
     public function __construct(string $key, string $signatureUrlKey = self::DEFAULT_SIGNATURE_KEY, string $timeoutUrlKey = self::DEFAULT_TIMEOUT_KEY)
     {
 
-        if($signatureUrlKey === $timeoutUrlKey) {
+        if ($signatureUrlKey === $timeoutUrlKey) {
             throw ConfigurationException::differentKeysRequired($signatureUrlKey);
         }
 
@@ -147,7 +140,7 @@ class HashConfiguration
      */
     public function hasHashConfigFlag(int $configFlag)
     {
-        return (bool) ($this->hashMask & $configFlag);
+        return (bool)($this->hashMask & $configFlag);
     }
 
     /**
@@ -167,7 +160,7 @@ class HashConfiguration
         $registeredAlgos = hash_hmac_algos();
 
         // TODO Are there platforms where the algorithms are capitalized?
-        if(!in_array(strtolower($algorithm), $registeredAlgos, true)) {
+        if (!in_array(strtolower($algorithm), $registeredAlgos, true)) {
             throw ConfigurationException::invalidAlgorithm($algorithm, $registeredAlgos);
         }
 
