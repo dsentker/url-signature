@@ -3,3 +3,7 @@ php:
     - '7.0'
     - '7.2'
 script: './vendor/bin/phpunit'
+before_script:
+    - composer install
+notifications:
+    email: false
