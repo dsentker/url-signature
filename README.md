@@ -1,6 +1,10 @@
 ## UrlSignature  
-
 **Create URLs with a signature to prevent modification**
+
+![PHP from Packagist](https://img.shields.io/packagist/php-v/dsentker/url-signature.svg)
+![Packagist](https://img.shields.io/packagist/v/dsentker/url-signature.svg)
+[![Build Status](https://travis-ci.org/dsentker/url-signature.svg?branch=master)](https://travis-ci.org/dsentker/url-signature)
+![GitHub last commit](https://img.shields.io/github/last-commit/dsentker/url-signature.svg)
 
 This small PHP >7.2.0 library allows developers to build urls with a hash to prevent the modification of URL parts.   
 
