@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Daniel
- * Date: 21.02.2019
- * Time: 12:33
- */
 
 namespace UrlSignatureTest\Utility;
 
@@ -12,7 +6,7 @@ use UrlSignature\HashConfiguration;
 
 class HashConfigFactory
 {
-    const SECRET = 'f00bar';
+    const SECRET = 'secure-key';
 
     const SIGNATURE_KEY = '_s';
 
@@ -33,8 +27,10 @@ class HashConfigFactory
     public static function createAdvancedConfigurationWithFullHashFlags()
     {
         $config = static::createSimpleConfiguration();
-        $config->setHashMask(HashConfiguration::FLAG_HASH_SCHEME
-            | HashConfiguration::FLAG_HASH_HOST
+        $config->setHashMask(
+
+            HashConfiguration::FLAG_HASH_HOST
+            | HashConfiguration::FLAG_HASH_SCHEME
             | HashConfiguration::FLAG_HASH_PORT
             | HashConfiguration::FLAG_HASH_PATH
             | HashConfiguration::FLAG_HASH_QUERY

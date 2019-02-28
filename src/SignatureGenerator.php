@@ -18,8 +18,8 @@ abstract class SignatureGenerator
      */
     protected function getUrlSignature(array $urlComponents)
     {
-        $configuration = $this->getConfiguration();
         $hashData = build($this->getHashDataFromUri($urlComponents));
+        $configuration = $this->getConfiguration();
 
         #$this->lastHashedUrl; // for debugging purposes
 

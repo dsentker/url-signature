@@ -11,12 +11,12 @@ class HashConfiguration
 
     const DEFAULT_TIMEOUT_KEY = '_expires';
 
-    const FLAG_HASH_SCHEME = 1;     // scheme
-    const FLAG_HASH_HOST = 2;       // host
-    const FLAG_HASH_PORT = 4;       // port
-    const FLAG_HASH_PATH = 8;       // path
-    const FLAG_HASH_QUERY = 16;     // query
-    const FLAG_HASH_FRAGMENT = 32;  // fragment
+    const FLAG_HASH_SCHEME = 2;     // scheme
+    const FLAG_HASH_HOST = 4;       // host
+    const FLAG_HASH_PORT = 8;       // port
+    const FLAG_HASH_PATH = 16;      // path
+    const FLAG_HASH_QUERY = 32;     // query
+    const FLAG_HASH_FRAGMENT = 64;  // fragment
 
 
     /** @var string */

@@ -32,12 +32,12 @@ class Validator extends SignatureGenerator
     public function isValid(string $url): bool
     {
         try {
-            $this->verify($url);
+            $isValid = $this->verify($url);
         } catch (ValidationException $e) {
             return false;
         }
 
-        return true;
+        return $isValid;
     }
 
     /**
@@ -72,8 +72,9 @@ class Validator extends SignatureGenerator
             throw SignatureInvalidException::emptySignature($signatureHash);
         }
 
-        // Remove signature from query part to make sure that it is not used for the hash
+        // Remove signature from query part to make sure that it is not used for the hash. Reunite to $urlComponents.
         unset($queryParts[$this->config->getSignatureUrlKey()]);
+        $urlComponents['query'] = QueryString::build($queryParts);
 
         $actualHash = $this->getUrlSignature($urlComponents);
 
