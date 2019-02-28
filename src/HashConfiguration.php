@@ -126,12 +126,21 @@ class HashConfiguration
     }
 
     /**
-     * @param int $hashMask
+     * @param int|int[] $hashMask
      */
-    public function setHashMask(int $hashMask)
+    public function setHashMask(...$hashMask)
     {
-        $this->hashMask = $hashMask;
+        /*
+         * If multiple arguments are used, the values get combined with a bitwise conjunction with
+         * the help of array_reduce.
+         * You can understand that better if you interpret the method call HashConfigFactory::setHashMask(2, 4, 8) to
+         * the following conjunction: 2 | 4 | 8
+         */
+        $this->hashMask = array_reduce($hashMask, function($a, $b) {
+            return $a | $b;
+        });
     }
+
 
     /**
      * @param int $configFlag
