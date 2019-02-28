@@ -1,4 +1,9 @@
-## CHANGELOG ##
+# CHANGELOG #
+
+## 1.x - 02/2019
+
+### 1.0.4
+* Enabled argument unpacking for bitmask via HashConfiguration->setHashMask() to facilitate the configuration in symfony's services.yaml
 
 ### 1.0.3
 * Validator::verify will now also throw an exception if the hash does not match the calculated hash (this will prevent using throw-catch statements prepended by a boolean comparison)
