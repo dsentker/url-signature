@@ -78,7 +78,11 @@ class Validator extends SignatureGenerator
 
         $actualHash = $this->getUrlSignature($urlComponents);
 
-        return hash_equals($signatureHash, $actualHash);
+        if(false === hash_equals($signatureHash, $actualHash)) {
+            throw SignatureInvalidException::signatureDoesNotMatch($actualHash);
+        }
+
+        return true;
     }
 
     public function getConfiguration(): HashConfiguration

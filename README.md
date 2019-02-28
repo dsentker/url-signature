@@ -41,7 +41,6 @@ $url = $builder->signUrl('https://example.com/foo?bar=42'); // http://example.co
 
 In this example we've created a new `Builder` instance with a configuration object, and using it to create the URL based on the data and URL provided. The `$url` result has the signature (the hash) value appended to the query string.
 
-
 ### Verifying URLs
 The other half of the equation is the verification of a URL. The library provides a `Validator` class to help with that. The validator must be initiated with the same configuration as the builder. Otherwise different hash values would be calculated.
 
@@ -59,7 +58,7 @@ $validator->verify('http://example.com?foo=this+is+a+test&_signature=90b7ac1...'
 `Validator::verify($url)` Will throw some of these exceptions if the url signature (or the expiration parameter) is not valid:
 * ValidationException
   * SignatureNotFoundException (if not present in query string)
-  * SignatureInvalidException (if present, but empty)
+  * SignatureInvalidException (if present, but empty or invalid)
   * SignatureExpiredException (if the expiration parameter has expired, never thrown if expiration was not part of the signature)
 
 ### Expiring URLs

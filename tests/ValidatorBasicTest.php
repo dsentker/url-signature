@@ -58,7 +58,6 @@ class ValidatorBasicTest extends TestCase
     {
         $this->expectException($expectedExceptionClass);
         $this->validator->verify($url);
-
     }
 
     public function getEmptySignatureUrls()
