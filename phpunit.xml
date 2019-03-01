@@ -7,7 +7,7 @@
          verbose="true"
          colors="true">
     <testsuites>
-        <testsuite name="HashedUri">
+        <testsuite name="UrlSignature">
             <directory>./tests</directory>
             <exclude>./tests/Utility</exclude>
         </testsuite>

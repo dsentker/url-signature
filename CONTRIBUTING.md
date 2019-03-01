@@ -7,7 +7,7 @@ We do all our work on GitHub. If you'd like to help, you can create a
 
 ## Reporting an issue
 
-For bug reports or feature requests, [please create a new issue](https://github.com/dsentker/hashed-uri/issues).
+For bug reports or feature requests, [please create a new issue](https://github.com/dsentker/url-signature/issues).
 
 Before filing an issue:
 
