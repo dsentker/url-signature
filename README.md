@@ -15,9 +15,14 @@ This signature value is built using the contents of the current URL along with a
 
 ## Installation
 Installing via [Composer](https://getcomposer.org) is simple:
+
 `composer require dsentker/url-signature`
 
-If you not like composer, you can download this repository files and use any PSR-4-Autoloader to get everything loaded. 
+If you not like composer, you can download this repository files and use any PSR-4-Autoloader to get everything loaded.
+
+There is also [a bundle for Symfony 4](https://github.com/dsentker/url-signature-bundle/) available:
+
+`composer require dsentker/url-signature-bundle` 
 
 ## Usage
 To sign (or validate) URLs, a key is required (which is of course secret). The key is used to hash special parts* of the URL and attach them as a signature in the query string of the URL.
@@ -128,8 +133,8 @@ The library uses the URL functions of [thephpleague/uri](https://github.com/thep
 ## Submitting bugs and feature requests
 Bugs and feature request are tracked on GitHub.
 
-## TODO
-- [ ] Make a small symfony bundle to use this with Twig and the request object. (WIP)  
+## Symfony 4 Bundle
+I also created [a bundle for Symfony4](https://github.com/dsentker/url-signature-bundle/) (with twig support and annotations).  
 
 ## Testing
 `./vendor/bin/phpunit`

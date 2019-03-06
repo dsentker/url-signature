@@ -1,10 +1,12 @@
 # CHANGELOG #
 
-## 1.x - 02/2019
+## 1.x
+02/2019 - 03/2019
 
 ### 1.0.5
 * Fixed typos in Docs
 * Get rid of old repository name
+* Added an information for the Symfony bundle.
 
 ### 1.0.4
 * Enabled argument unpacking for bitmask via HashConfiguration->setHashMask() to facilitate the configuration in symfony's services.yaml
