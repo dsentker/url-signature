@@ -277,11 +277,11 @@ class BuilderTest extends TestCase
 
         return [
             ['', 'fb733dd1c218a508557e5c1f175099d2109cef323279c9e890c15e8e8efa0a9e'],
-            #['/', 'd603a7eee64f1e0f9bc9388a7fdf18ebddab6c5676220b613a7f6f3c90a9ebfc'],
-            #['/test', 'fbdd0b5c0d62dd16deb3111bf81fa97d31441b8fa369aa250819f42caafdbd40'],
-            #['/foo/bar?qux=pax', '0a186b0712502fa25c85acc7c563f7fe9c9e2fdbd73e2de5897fc79eb1b05c5e'],
-            #['/foo?qux&baz=bar', '3be37e183563da4da2de7ecdea1ab5d1fdfdecd7a7b0fe7cd93dd0bab09acf1f'],
-            #['/foo?qux&baz=bar#fragment', '3be37e183563da4da2de7ecdea1ab5d1fdfdecd7a7b0fe7cd93dd0bab09acf1f'], // same hash as before, fragment must be ignored
+            ['/', 'd603a7eee64f1e0f9bc9388a7fdf18ebddab6c5676220b613a7f6f3c90a9ebfc'],
+            ['/test', 'fbdd0b5c0d62dd16deb3111bf81fa97d31441b8fa369aa250819f42caafdbd40'],
+            ['/foo/bar?qux=pax', '0a186b0712502fa25c85acc7c563f7fe9c9e2fdbd73e2de5897fc79eb1b05c5e'],
+            ['/foo?qux&baz=bar', '3be37e183563da4da2de7ecdea1ab5d1fdfdecd7a7b0fe7cd93dd0bab09acf1f'],
+            ['/foo?qux&baz=bar#fragment', '3be37e183563da4da2de7ecdea1ab5d1fdfdecd7a7b0fe7cd93dd0bab09acf1f'], // same hash as before, fragment must be ignored
         ];
     }
 
