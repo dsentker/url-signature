@@ -140,3 +140,8 @@ I also created [a bundle for Symfony4](https://github.com/dsentker/url-signature
 `./vendor/bin/phpunit`
 
 Do not be surprised about a short break of two seconds during the tests. A `sleep(2)` was built in to test for the validation of the timeout functionality.
+
+## See also
+* [URL Signature Bundle](https://github.com/dsentker/url-signature-bundle/) for Symfony 4
+* [ivanakimov/hashids](https://github.com/ivanakimov/hashids.php) A PHP Version from [hashids.org](https://hashids.org/)
+* [HashidsBundle](https://github.com/roukmoute/HashidsBundle) The relating Symfony Bundle from _roukmoute_
