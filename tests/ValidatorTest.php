@@ -29,13 +29,24 @@ class ValidatorTest extends TestCase
         $this->validator = new Validator($config);
     }
 
-    public function testExpiredUrl()
+    /**
+     * @group failing
+     * @group issue-1
+     */
+    public function testExpirationIsValid()
+    {
+        $builder = new Builder(HashConfigFactory::createSimpleConfiguration());
+        $hashedUrl = $builder->signUrl('https://example.com/foo/', '+10 minutes');
+        $this->assertTrue($builder->createValidator()->verify($hashedUrl));
+    }
+
+    public function testExpirationIsInvalid()
     {
         $this->expectException(SignatureExpiredException::class);
 
         $builder = new Builder(HashConfigFactory::createSimpleConfiguration());
         $hashedUrl = $builder->signUrl('http://example.com/foo', '+1 seconds');
-        sleep(2); // sorry for that.
+        usleep(2010000);
         $builder->createValidator()->verify($hashedUrl);
     }
 

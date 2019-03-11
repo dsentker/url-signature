@@ -49,7 +49,6 @@ class Builder extends SignatureGenerator
         // Add generated hash value to query string.
         $queryParts[$this->config->getSignatureUrlKey()] = $this->getUrlSignature($urlComponents);
 
-
         $urlComponents['query'] = QueryString::build($queryParts);
 
         return build($urlComponents);

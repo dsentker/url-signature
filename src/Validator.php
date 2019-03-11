@@ -54,8 +54,9 @@ class Validator extends SignatureGenerator
         $urlComponents = parse($url);
         $query = $urlComponents['query'];
         $queryParts = QueryString::getKeyValuePairs($query);
+        $signatureKey = $this->config->getSignatureUrlKey();
 
-        if (!array_key_exists($this->config->getSignatureUrlKey(), $queryParts)) {
+        if (!array_key_exists($signatureKey, $queryParts)) {
             throw SignatureNotFoundException::notPresetInQueryString($query);
         }
 
@@ -67,13 +68,14 @@ class Validator extends SignatureGenerator
             }
         }
 
-        $signatureHash = (string)$queryParts[$this->config->getSignatureUrlKey()]; // Cast to string in case of NULL
+        $signatureHash = (string)$queryParts[$signatureKey]; // Cast to string in case of NULL
         if (empty($signatureHash)) {
             throw SignatureInvalidException::emptySignature($signatureHash);
         }
 
-        // Remove signature from query part to make sure that it is not used for the hash. Reunite to $urlComponents.
-        unset($queryParts[$this->config->getSignatureUrlKey()]);
+        // Remove signature from query array, rebuild the remaining query string and replace it with
+        // the $urlComponents array containing all information we need to build / verify the signature
+        unset($queryParts[$signatureKey]);
         $urlComponents['query'] = QueryString::build($queryParts);
 
         $actualHash = $this->getUrlSignature($urlComponents);
