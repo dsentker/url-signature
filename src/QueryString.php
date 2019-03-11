@@ -7,7 +7,7 @@ use League\Uri\Parser\QueryString as LeagueQueryString;
 /**
  * Class QueryString
  *
- * This class acts as a face to League\Uri\Parser\QueryString to simplify the annoying conversion of array parts.
+ * This class acts as a facade to League\Uri\Parser\QueryString to simplify the annoying conversion of array parts.
  * In League Query String, the query parts looks like this:
  * $foo = [
  *      ['key1', 'value1'],
@@ -63,5 +63,23 @@ class QueryString
         return LeagueQueryString::build($pairs);
     }
 
+    /**
+     * @param string|null $query
+     * @param string      $key
+     * @param string      $value
+     *
+     * @return string|null
+     */
+    public static function append(?string $query, string $key, string $value)
+    {
+
+        if(empty($query)) {
+            return static::build([$key => $value]);
+        }
+
+        $pairs = LeagueQueryString::parse($query);
+        $pairs[] = [$key, $value];
+        return LeagueQueryString::build($pairs);
+    }
 
 }

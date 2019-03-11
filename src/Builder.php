@@ -37,7 +37,7 @@ class Builder extends SignatureGenerator
             unset($queryParts[$this->config->getTimeoutUrlKey()]);
         }
 
-        // Add timeout to query string
+        // Add timeout to query string, if given
         if ($timeout !== null) {
             $timeoutTimestamp = $this->timeoutToInt($timeout);
             if ($timeoutTimestamp < time()) {
@@ -46,10 +46,12 @@ class Builder extends SignatureGenerator
             $queryParts[$this->config->getTimeoutUrlKey()] = $timeoutTimestamp;
         }
 
-        // Add generated hash value to query string.
-        $queryParts[$this->config->getSignatureUrlKey()] = $this->getUrlSignature($urlComponents);
-
         $urlComponents['query'] = QueryString::build($queryParts);
+
+        // Add generated hash value to query string.
+        $signature = $this->getUrlSignature($urlComponents);
+        $urlComponents['query'] = QueryString::append($urlComponents['query'], $this->config->getSignatureUrlKey(), $signature);
+
 
         return build($urlComponents);
 

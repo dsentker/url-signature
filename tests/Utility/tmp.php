@@ -1,5 +1,8 @@
 <?php
 
+var_dump(hash_hmac('SHA256', '', 'secure-key'));
+exit;
+
 foreach([
             '//example.com',
             '//example.com?foo=bar',

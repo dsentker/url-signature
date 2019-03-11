@@ -59,6 +59,8 @@ abstract class SignatureGenerator
             $hashParts['fragment'] = $urlParts['fragment'];
         }
 
+        #print_r($hashParts);
+
         return $hashParts;
     }
 }

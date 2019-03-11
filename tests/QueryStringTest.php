@@ -33,4 +33,18 @@ class QueryStringTest extends TestCase
         ], $parts);
 
     }
+
+    public function testAppendOnEmptyString()
+    {
+        $queryString = '';
+        $result = QueryString::append($queryString, 'foo', 'bar');
+        $this->assertEquals('foo=bar', $result);
+    }
+
+    public function testAppendOnExistingString()
+    {
+        $queryString = 'qux=test&baz=42';
+        $result = QueryString::append($queryString, 'foo', 'bar');
+        $this->assertEquals('qux=test&baz=42&foo=bar', $result);
+    }
 }

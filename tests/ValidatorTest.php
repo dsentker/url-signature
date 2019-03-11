@@ -30,7 +30,6 @@ class ValidatorTest extends TestCase
     }
 
     /**
-     * @group failing
      * @group issue-1
      */
     public function testExpirationIsValid()
