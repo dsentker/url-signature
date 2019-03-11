@@ -3,6 +3,10 @@
 ## 1.x
 02/2019 - 03/2019
 
+### 1.0.6
+* Fixing issue #1 where an expiring query value was not part of the hash and fails on validation.
+* Added tests for #1.
+
 ### 1.0.5
 * Fixed typos in Docs
 * Get rid of old repository name
