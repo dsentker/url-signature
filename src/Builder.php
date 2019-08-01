@@ -2,6 +2,7 @@
 
 namespace UrlSignature;
 
+use DateTimeInterface;
 use UrlSignature\Exception\TimeoutException;
 use function League\Uri\parse;
 use function League\Uri\build;
@@ -12,18 +13,19 @@ class Builder extends SignatureGenerator
     /** @var HashConfiguration */
     private $config;
 
-    /**
-     * Builder constructor.
-     *
-     * @param HashConfiguration $config
-     */
     public function __construct(HashConfiguration $config)
     {
         $this->config = $config;
     }
 
-
-    public function signUrl(string $url, $timeout = null)
+    /**
+     * @param string $url
+     * @param null   $timeout
+     *
+     * @return string The complete URL with additional query parameters
+     * @throws TimeoutException
+     */
+    public function signUrl(string $url, $timeout = null): string
     {
 
         $urlComponents = parse($url);
@@ -74,7 +76,7 @@ class Builder extends SignatureGenerator
             if (false === $timeoutTimestamp) {
                 throw TimeoutException::notParsable();
             }
-        } elseif ($timeout instanceof \DateTimeInterface) {
+        } elseif ($timeout instanceof DateTimeInterface) {
             $timeoutTimestamp = $timeout->getTimestamp();
         } else {
             throw TimeoutException::unknownFormat($timeout);
@@ -97,5 +99,4 @@ class Builder extends SignatureGenerator
     {
         return new Validator($this->getConfiguration());
     }
-
 }

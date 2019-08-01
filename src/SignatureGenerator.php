@@ -16,7 +16,7 @@ abstract class SignatureGenerator
      *
      * @return string lowercase hexits as hash from hash_hmac
      */
-    protected function getUrlSignature(array $urlComponents)
+    protected function getUrlSignature(array $urlComponents): string
     {
         $hashData = build($this->getHashDataFromUri($urlComponents));
         $configuration = $this->getConfiguration();
@@ -34,7 +34,7 @@ abstract class SignatureGenerator
      *
      * @return array
      */
-    private function getHashDataFromUri(array $urlParts)
+    private function getHashDataFromUri(array $urlParts): array
     {
 
         $hashParts = [];

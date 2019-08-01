@@ -81,5 +81,4 @@ class QueryString
         $pairs[] = [$key, $value];
         return LeagueQueryString::build($pairs);
     }
-
 }

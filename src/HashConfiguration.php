@@ -38,15 +38,11 @@ class HashConfiguration
      */
     protected $algorithm = 'SHA256';
 
-    /**
-     * Builder constructor.
-     *
-     * @param string $key
-     * @param string $signatureUrlKey
-     * @param string $timeoutUrlKey
-     */
-    public function __construct(string $key, string $signatureUrlKey = self::DEFAULT_SIGNATURE_KEY, string $timeoutUrlKey = self::DEFAULT_TIMEOUT_KEY)
-    {
+    public function __construct(
+        string $key,
+        string $signatureUrlKey = self::DEFAULT_SIGNATURE_KEY,
+        string $timeoutUrlKey = self::DEFAULT_TIMEOUT_KEY
+    ) {
 
         if ($signatureUrlKey === $timeoutUrlKey) {
             throw ConfigurationException::differentKeysRequired($signatureUrlKey);
@@ -63,63 +59,43 @@ class HashConfiguration
      * @param string $key
      *
      * @return HashConfiguration
+     * @throws ConfigurationException
      */
     public static function create(string $key)
     {
         return new static($key);
     }
 
-    /**
-     * @return string
-     */
     public function getKey(): string
     {
         return $this->key;
     }
 
-    /**
-     * @param string $key
-     */
     public function setKey(string $key)
     {
         $this->key = $key;
     }
 
-    /**
-     * @return string
-     */
     public function getSignatureUrlKey(): string
     {
         return $this->signatureUrlKey;
     }
 
-    /**
-     * @param string $signatureUrlKey
-     */
     public function setSignatureUrlKey(string $signatureUrlKey)
     {
         $this->signatureUrlKey = $signatureUrlKey;
     }
 
-    /**
-     * @return string
-     */
     public function getTimeoutUrlKey(): string
     {
         return $this->timeoutUrlKey;
     }
 
-    /**
-     * @param string $timeoutUrlKey
-     */
     public function setTimeoutUrlKey(string $timeoutUrlKey)
     {
         $this->timeoutUrlKey = $timeoutUrlKey;
     }
 
-    /**
-     * @return int
-     */
     public function getHashMask(): int
     {
         return $this->hashMask;
@@ -141,28 +117,16 @@ class HashConfiguration
         });
     }
 
-
-    /**
-     * @param int $configFlag
-     *
-     * @return bool
-     */
-    public function hasHashConfigFlag(int $configFlag)
+    public function hasHashConfigFlag(int $configFlag): bool
     {
         return (bool)($this->hashMask & $configFlag);
     }
 
-    /**
-     * @return string
-     */
     public function getAlgorithm(): string
     {
         return $this->algorithm;
     }
 
-    /**
-     * @param string $algorithm
-     */
     public function setAlgorithm(string $algorithm): void
     {
 
@@ -175,5 +139,4 @@ class HashConfiguration
 
         $this->algorithm = $algorithm;
     }
-
 }

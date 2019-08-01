@@ -14,21 +14,11 @@ class Validator extends SignatureGenerator
     /** @var HashConfiguration */
     private $config;
 
-    /**
-     * Builder constructor.
-     *
-     * @param HashConfiguration $config
-     */
     public function __construct(HashConfiguration $config)
     {
         $this->config = $config;
     }
 
-    /**
-     * @param string $url
-     *
-     * @return bool
-     */
     public function isValid(string $url): bool
     {
         try {
@@ -91,6 +81,4 @@ class Validator extends SignatureGenerator
     {
         return $this->config;
     }
-
-
 }

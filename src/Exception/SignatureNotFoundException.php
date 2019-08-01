@@ -8,6 +8,9 @@ class SignatureNotFoundException extends ValidationException
     {
         return (empty($givenQuery))
             ? new static(sprintf('Can not verify the URL because it does not contain a query string'))
-            : new static(sprintf('Can not verify the URL because it does not contain a signature in query string "%s".', $givenQuery));
+            : new static(sprintf(
+                'Can not verify the URL because it does not contain a signature in query string "%s".',
+                $givenQuery
+            ));
     }
 }

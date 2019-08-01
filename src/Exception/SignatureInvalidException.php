@@ -10,7 +10,7 @@ class SignatureInvalidException extends ValidationException
         return new static(sprintf('The Signature "%s" is invalid.', $givenSignature));
     }
 
-    public static function signatureDoesNotMatch(?string $givenSignature)
+    public static function signatureDoesNotMatch(?string $givenSignature): SignatureInvalidException
     {
         return new static(sprintf('The Signature "%s" is invalid for this URL.', $givenSignature));
     }
