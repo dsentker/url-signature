@@ -1,5 +1,9 @@
 # CHANGELOG #
 
+### 1.0.8
+* Renamed variable for a more meaningful name
+* Added missing test for symfony-style URL structure
+
 ### 1.0.7
 * Some Code style fixed (PSR)
 * Removed unnecessary docblocks

@@ -39,6 +39,13 @@ class ValidatorTest extends TestCase
         $this->assertTrue($builder->createValidator()->verify($hashedUrl));
     }
 
+    public function testExpirationWithQueryParamIsValid()
+    {
+        $builder = new Builder(HashConfigFactory::createSimpleConfiguration());
+        $hashedUrl = $builder->signUrl('https://example.com/foo/bar/479?remove=1', '+14 minutes');
+        $this->assertTrue($builder->createValidator()->verify($hashedUrl));
+    }
+
     public function testExpirationIsInvalid()
     {
         $this->expectException(SignatureExpiredException::class);
