@@ -68,10 +68,10 @@ class Validator extends SignatureGenerator
         unset($queryParts[$signatureKey]);
         $urlComponents['query'] = QueryString::build($queryParts);
 
-        $actualHash = $this->getUrlSignature($urlComponents);
+        $expectedHash = $this->getUrlSignature($urlComponents);
 
-        if(false === hash_equals($signatureHash, $actualHash)) {
-            throw SignatureInvalidException::signatureDoesNotMatch($actualHash);
+        if(false === hash_equals($signatureHash, $expectedHash)) {
+            throw SignatureInvalidException::signatureDoesNotMatch($expectedHash);
         }
 
         return true;

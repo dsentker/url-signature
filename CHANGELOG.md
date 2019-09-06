@@ -1,7 +1,9 @@
 # CHANGELOG #
 
-## 1.x
-02/2019 - 03/2019
+### 1.0.7
+* Some Code style fixed (PSR)
+* Removed unnecessary docblocks
+* Added return type declarations for some methods
 
 ### 1.0.6
 * Fixing issue #1 where an expiring query value was not part of the hash and fails on validation.
