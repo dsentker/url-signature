@@ -15,7 +15,7 @@
         "phpunit/phpunit": "^7.0"
     },
     "require": {
-        "php": "^7.1",
+        "php": "^7.2",
         "league/uri-query-parser": "^1.0",
         "league/uri-parser": "^1.4"
     },

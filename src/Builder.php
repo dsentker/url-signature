@@ -95,7 +95,7 @@ class Builder extends SignatureGenerator
      *
      * @return Validator
      */
-    public function createValidator()
+    public function createValidator(): Validator
     {
         return new Validator($this->getConfiguration());
     }

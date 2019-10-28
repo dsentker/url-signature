@@ -61,7 +61,7 @@ class HashConfiguration
      * @return HashConfiguration
      * @throws ConfigurationException
      */
-    public static function create(string $key)
+    public static function create(string $key): self
     {
         return new static($key);
     }
@@ -71,7 +71,7 @@ class HashConfiguration
         return $this->key;
     }
 
-    public function setKey(string $key)
+    public function setKey(string $key): void
     {
         $this->key = $key;
     }

@@ -39,7 +39,7 @@ class Validator extends SignatureGenerator
      * @throws SignatureInvalidException
      * @throws SignatureNotFoundException
      */
-    public function verify(string $url)
+    public function verify(string $url): bool
     {
         $urlComponents = parse($url);
         $query = $urlComponents['query'];

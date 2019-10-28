@@ -18,15 +18,16 @@ Installing via [Composer](https://getcomposer.org) is simple:
 
 `composer require dsentker/url-signature`
 
-If you not like composer, you can download this repository files and use any PSR-4-Autoloader to get everything loaded.
+If you do not like composer, you can download this repository and use any PSR-4-Autoloader to get everything loaded.
 
-There is also [a bundle for Symfony 4](https://github.com/dsentker/url-signature-bundle/) available:
+There is also [a **Symfony bundle**](https://github.com/dsentker/url-signature-bundle/) available:
 
 `composer require dsentker/url-signature-bundle` 
 
 ## Usage
 To sign (or validate) URLs, a key is required (which is of course secret). The key is used to hash special parts* of the URL and attach them as a signature in the query string of the URL.
-*) You can decide for yourself which parts of the URL should be hashed.
+
+_*) You can decide for yourself which parts of the URL should be hashed._
 
 Later, on validation, the same key is used to hash the current URL. This hash is compared with the hash in query string.
 
@@ -71,9 +72,7 @@ The library also provides the ability to create URLs that will fail validation b
 ```php
 <?php
 $builder = new Builder($configuration);
-$url = $builder->signUrl('http://example.com/foo?bar=42', '+10 minutes');
-
-// https://example.com?foo=bar&_expires=1521661473&_signature=009e2d70...
+$url = $builder->signUrl('http://example.com/foo?bar=42', '+10 minutes'); // https://example.com?foo=bar&_expires=1521661473&_signature=009e2d70...
 ```
 
 You'll notice the addition of a new URL parameter, the `_expires` value. This value is automatically read when the `validate` call is made to ensure the URL hasn't timed out. If it has, even if the rest of the data is correct, the result will be `false`.

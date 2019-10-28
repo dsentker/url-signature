@@ -1,5 +1,10 @@
 # CHANGELOG #
 
+### 1.0.9
+* Fixed Issue #2 where a different order of query string parameters causes invalid hashes
+* Added return type declarations
+* Version bump
+
 ### 1.0.8
 * Renamed variable for a more meaningful name
 * Added missing test for symfony-style URL structure

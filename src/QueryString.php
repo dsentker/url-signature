@@ -25,11 +25,6 @@ use League\Uri\Parser\QueryString as LeagueQueryString;
 class QueryString
 {
 
-    /**
-     * @param string $query
-     *
-     * @return array
-     */
     public static function getKeyValuePairs(?string $query): array
     {
 
@@ -51,12 +46,7 @@ class QueryString
         return $keyValuePairs;
     }
 
-    /**
-     * @param array $keyValuePairs
-     *
-     * @return string
-     */
-    public static function build(array $keyValuePairs)
+    public static function build(array $keyValuePairs): string
     {
 
         // Sort the keys alphabetically to ensure that the same order is always maintained - this is necessary so that
@@ -68,18 +58,10 @@ class QueryString
             $pairs[] = [$key, $value];
         }
 
-        /** @noinspection PhpParamsInspection */
-        return LeagueQueryString::build($pairs);
+        return (string) LeagueQueryString::build($pairs);
     }
 
-    /**
-     * @param string|null $query
-     * @param string      $key
-     * @param string      $value
-     *
-     * @return string|null
-     */
-    public static function append(?string $query, string $key, string $value)
+    public static function append(?string $query, string $key, string $value): ?string
     {
 
         if(empty($query)) {
