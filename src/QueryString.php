@@ -30,7 +30,7 @@ class QueryString
      *
      * @return array
      */
-    public static function getKeyValuePairs(?string $query)
+    public static function getKeyValuePairs(?string $query): array
     {
 
         if (empty($query)) {
@@ -44,6 +44,10 @@ class QueryString
             $keyValuePairs[$key] = $value;
         }
 
+        // Sort the keys alphabetically to ensure that the same order is always maintained - this is necessary so that
+        // the hash is identical even if the order from the query string is different.
+        ksort($keyValuePairs);
+
         return $keyValuePairs;
     }
 
@@ -54,6 +58,11 @@ class QueryString
      */
     public static function build(array $keyValuePairs)
     {
+
+        // Sort the keys alphabetically to ensure that the same order is always maintained - this is necessary so that
+        // the hash is identical even if the order from the query string is different.
+        ksort($keyValuePairs);
+
         $pairs = [];
         foreach ($keyValuePairs as $key => $value) {
             $pairs[] = [$key, $value];
