@@ -30,10 +30,10 @@
 * Validator::verify will now also throw an exception if the hash does not match the calculated hash (this will prevent using throw-catch statements prepended by a boolean comparison)
 
 ### 1.0.2
-First stable relase.
+First stable release.
 * Fixed bug in Validator::isValid where an non-equal hash returns true, too (Do not use previous versions!)
 * Updated readme file (removing old method names)
-* Preparements for Symfony Bundle integration
+* Preparation for Symfony Bundle integration
 
 ### 1.0.1
 * Travis CI Integration

@@ -68,7 +68,7 @@ $validator->verify('http://example.com?foo=this+is+a+test&_signature=90b7ac1...'
   * SignatureExpiredException (if the expiration parameter has expired, never thrown if expiration was not part of the signature)
 
 ### Expiring URLs
-The library also provides the ability to create URLs that will fail validation because they've expired. To make use of this, simply pass in a second parameter for the `signUrl()` method call. This value should either be a relative string (parsable by PHP's [strtotime](https://php.net/strtotime)) or a \DateTime object:
+The library also provides the ability to create URLs that will fail validation because they've expired. To make use of this, simply pass in a second parameter for the `signUrl()` method call. This value should either be a relative string (parsable by PHPs [strtotime](https://php.net/strtotime)) or a \DateTime object:
 ```php
 <?php
 $builder = new Builder($configuration);
@@ -124,7 +124,7 @@ This library creates a hash from one or more URL parts. That means, that the URL
 * ...this library is the only auditing mechanism designed to prevent a user from retrieving content that is not intended for them.
 
 ## Credits
-Based on the ideas by [psecio](https://github.com/psecio), the project was forked by [dsentker](https://github.com/dsentker) (thats me 😁) to upgrade the code for PHP 7.x applications. The adjustments then resulted in a separate library (this one). The implementation of a Symfony Bundle is planned.
+Based on the ideas by [psecio](https://github.com/psecio), the project was forked by [dsentker](https://github.com/dsentker) (that's me 😁) to upgrade the code for PHP 7.x applications. The adjustments then resulted in a separate library (this one) and a symfony bundle.
 
 ## Dependencies
 The library uses the URL functions of [thephpleague/uri](https://github.com/thephpleague/uri) to parse, extract and (re-)build URL components. For unit tests, PhpUnit is used. 

@@ -2,6 +2,7 @@
 
 namespace UrlSignatureTest\Utility;
 
+use UrlSignature\Exception\ConfigurationException;
 use UrlSignature\HashConfiguration;
 
 class HashConfigFactory
@@ -16,6 +17,7 @@ class HashConfigFactory
 
     /**
      * @return HashConfiguration
+     * @throws ConfigurationException
      */
     public static function createSimpleConfiguration()
     {
