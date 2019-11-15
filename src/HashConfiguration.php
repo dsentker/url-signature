@@ -18,7 +18,6 @@ class HashConfiguration
     const FLAG_HASH_QUERY = 32;     // query
     const FLAG_HASH_FRAGMENT = 64;  // fragment
 
-
     /** @var string */
     private $key;
 

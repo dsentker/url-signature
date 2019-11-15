@@ -5,8 +5,6 @@ namespace UrlSignature;
 use League\Uri\Parser\QueryString as LeagueQueryString;
 
 /**
- * Class QueryString
- *
  * This class acts as a facade to League\Uri\Parser\QueryString to simplify the annoying conversion of array parts.
  * In League Query String, the query parts looks like this:
  * $foo = [

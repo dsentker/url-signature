@@ -1,5 +1,10 @@
 # CHANGELOG #
 
+### 1.0.10
+* Added typehint in array docblocks 
+* Small fixes for a better code style
+* Fixed typos
+
 ### 1.0.9
 * Fixed Issue #2 where a different order of query string parameters causes invalid hashes
 * Added return type declarations

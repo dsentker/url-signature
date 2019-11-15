@@ -21,8 +21,6 @@ abstract class SignatureGenerator
         $hashData = build($this->getHashDataFromUri($urlComponents));
         $configuration = $this->getConfiguration();
 
-        #$this->lastHashedUrl; // for debugging purposes
-
         return hash_hmac($configuration->getAlgorithm(), $hashData, $configuration->getKey());
     }
 
@@ -30,7 +28,7 @@ abstract class SignatureGenerator
      * Check if a single url component is required for hash value and returns the
      * hashable URL components as array.
      *
-     * @param array $urlParts
+     * @param string[] $urlParts
      *
      * @return array
      */

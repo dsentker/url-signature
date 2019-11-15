@@ -19,10 +19,10 @@ class Builder extends SignatureGenerator
     }
 
     /**
-     * @param string $url
-     * @param null   $timeout
+     * @param string $url     The URL to sign
+     * @param mixed  $timeout A timestamp, date or string which sets the lifetime for the hash.
      *
-     * @return string The complete URL with additional query parameters
+     * @return string The complete URL with the generated hash in query
      * @throws TimeoutException
      */
     public function signUrl(string $url, $timeout = null): string
