@@ -4,7 +4,7 @@ namespace UrlSignature;
 
 use UrlSignature\Exception\ConfigurationException;
 
-class HashConfiguration
+final class HashConfiguration
 {
 
     const DEFAULT_SIGNATURE_KEY = '_signature';
