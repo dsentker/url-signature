@@ -9,6 +9,11 @@ class TimeoutException extends UrlSignatureException
         return new self('The timeout cannot be parsed via strtotime() and is evidently not a valid date format (as defined via http://php.net/manual/de/datetime.formats.php)');
     }
 
+    /**
+     * @param mixed $given
+     *
+     * @return TimeoutException
+     */
     public static function unknownFormat($given): TimeoutException
     {
         return new self(sprintf(

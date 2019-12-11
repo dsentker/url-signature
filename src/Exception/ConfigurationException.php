@@ -13,6 +13,12 @@ class ConfigurationException extends UrlSignatureException
         ));
     }
 
+    /**
+     * @param string $algo
+     * @param array<string>  $availableAlgos
+     *
+     * @return ConfigurationException
+     */
     public static function invalidAlgorithm(string $algo, array $availableAlgos): ConfigurationException
     {
         return new self(

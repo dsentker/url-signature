@@ -80,7 +80,7 @@ final class HashConfiguration
         return $this->signatureUrlKey;
     }
 
-    public function setSignatureUrlKey(string $signatureUrlKey)
+    public function setSignatureUrlKey(string $signatureUrlKey): void
     {
         $this->signatureUrlKey = $signatureUrlKey;
     }
@@ -90,7 +90,7 @@ final class HashConfiguration
         return $this->timeoutUrlKey;
     }
 
-    public function setTimeoutUrlKey(string $timeoutUrlKey)
+    public function setTimeoutUrlKey(string $timeoutUrlKey): void
     {
         $this->timeoutUrlKey = $timeoutUrlKey;
     }
@@ -103,7 +103,7 @@ final class HashConfiguration
     /**
      * @param int|int[] $hashMask
      */
-    public function setHashMask(...$hashMask)
+    public function setHashMask(...$hashMask): void
     {
         /*
          * If multiple arguments are used, the values get combined with a bitwise conjunction with
