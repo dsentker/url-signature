@@ -5,7 +5,7 @@ namespace UrlSignature;
 use League\Uri\Parser\QueryString as LeagueQueryString;
 
 /**
- * This class acts as a facade to League\Uri\Parser\QueryString to simplify the annoying conversion of array parts.
+ * This class acts as a facade to League\Uri\Parser\QueryString to simplify the conversion of array parts.
  * In League Query String, the query parts looks like this:
  * $foo = [
  *      ['key1', 'value1'],
@@ -23,6 +23,11 @@ use League\Uri\Parser\QueryString as LeagueQueryString;
 class QueryString
 {
 
+    /**
+     * @param string|null $query
+     *
+     * @return array<string, string>
+     */
     public static function getKeyValuePairs(?string $query): array
     {
 
@@ -33,7 +38,7 @@ class QueryString
         $keyValuePairs = [];
         $pairs = LeagueQueryString::parse($query);
         foreach ($pairs as $pair) {
-            list($key, $value) = $pair;
+            [$key, $value] = $pair;
             $keyValuePairs[$key] = $value;
         }
 
@@ -44,6 +49,11 @@ class QueryString
         return $keyValuePairs;
     }
 
+    /**
+     * @param array<string, string> $keyValuePairs
+     *
+     * @return string
+     */
     public static function build(array $keyValuePairs): string
     {
 

@@ -7,6 +7,7 @@ use function League\Uri\build;
 abstract class SignatureGenerator
 {
 
+    /** @var string */
     public $lastHashedUrl;
 
     abstract public function getConfiguration(): HashConfiguration;
@@ -30,7 +31,7 @@ abstract class SignatureGenerator
      *
      * @param string[] $urlParts
      *
-     * @return array
+     * @return array<string, string>
      */
     private function getHashDataFromUri(array $urlParts): array
     {
