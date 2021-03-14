@@ -68,11 +68,11 @@ class ValidatorTest extends TestCase
     public function testExceptionOnWrongSignature()
     {
         $this->expectException(SignatureInvalidException::class);
-        $hashedUrl = $this->addSignatureToUrl('http://www.example.com', 'iCertainlyWillNotMatch');
+        $hashedUrl = $this->addSignatureToUrl('http://www.example.com', 'iWillNotMatchForSure');
         $this->validator->verify($hashedUrl);
     }
 
-    // Data Provider and helper methods Below
+    // Data Provider and helper methods below
     // -----------------------------------------------------------------------------------------------------------------
 
     /**

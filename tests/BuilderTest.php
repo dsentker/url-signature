@@ -242,8 +242,7 @@ class BuilderTest extends TestCase
     public function getInvalidTimeoutValues()
     {
 
-        $toStringClass = new class
-        {
+        $toStringClass = new class {
             public function __toString()
             {
                 return (string)(new \DateTime('2035-10-10 10:10:10'))->getTimestamp();
@@ -269,19 +268,22 @@ class BuilderTest extends TestCase
     public function getTestUrlsWithHash()
     {
         # To test yourself:
-        # var_dump(hash_hmac('SHA256', '', 'secure-key')); // fb733dd1c218a508557e5c1f175099d2109cef323279c9e890c15e8e8efa0a9e
-        # var_dump(hash_hmac('SHA256', '/', 'secure-key')); // d603a7eee64f1e0f9bc9388a7fdf18ebddab6c5676220b613a7f6f3c90a9ebfc
-        # var_dump(hash_hmac('SHA256', '/test', 'secure-key')); // fbdd0b5c0d62dd16deb3111bf81fa97d31441b8fa369aa250819f42caafdbd40
         # var_dump(hash_hmac('SHA256', '/foo/bar?qux=pax', 'secure-key')); // 0a186b0712502fa25c85acc7c563f7fe9c9e2fdbd73e2de5897fc79eb1b05c5e
-        # var_dump(hash_hmac('SHA256', '/foo?qux&baz=bar', 'secure-key')); // 3be37e183563da4da2de7ecdea1ab5d1fdfdecd7a7b0fe7cd93dd0bab09acf1f
+        # ...or use the web version @ https://www.freeformatter.com/hmac-generator.html
 
         return [
             ['', 'fb733dd1c218a508557e5c1f175099d2109cef323279c9e890c15e8e8efa0a9e'],
             ['/', 'd603a7eee64f1e0f9bc9388a7fdf18ebddab6c5676220b613a7f6f3c90a9ebfc'],
             ['/test', 'fbdd0b5c0d62dd16deb3111bf81fa97d31441b8fa369aa250819f42caafdbd40'],
             ['/foo/bar?qux=pax', '0a186b0712502fa25c85acc7c563f7fe9c9e2fdbd73e2de5897fc79eb1b05c5e'],
-            ['/foo?qux&baz=bar', '3be37e183563da4da2de7ecdea1ab5d1fdfdecd7a7b0fe7cd93dd0bab09acf1f'],
-            ['/foo?qux&baz=bar#fragment', '3be37e183563da4da2de7ecdea1ab5d1fdfdecd7a7b0fe7cd93dd0bab09acf1f'], // same hash as before, fragment must be ignored
+
+            // The query parameters are the same, but in different order. Hash is the same, because the parameter keys should be ordered.
+            ['/foo?aaa=zzz&yyy=bbb', '15f9efefce86450575bda3d41ba9fdb6dec41701bc450523c2ebee190e630079'],
+            ['/foo?yyy=bbb&aaa=zzz', '15f9efefce86450575bda3d41ba9fdb6dec41701bc450523c2ebee190e630079'],
+
+            // Test a query string with and without fragment. Must be ignored so the hash is the same
+            ['/foo?qux&baz=bar', '52cf100b6ade3b28fb07da81d99a384c5353d70a0d2f060d7eb30e1eb85c96b1'],
+            ['/foo?qux&baz=bar#fragment', '52cf100b6ade3b28fb07da81d99a384c5353d70a0d2f060d7eb30e1eb85c96b1'], // same hash as before, fragment must be ignored
         ];
     }
 

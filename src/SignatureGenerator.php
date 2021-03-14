@@ -51,8 +51,11 @@ abstract class SignatureGenerator
         if ($configuration->hasHashConfigFlag(HashConfiguration::FLAG_HASH_PATH)) {
             $hashParts['path'] = $urlParts['path'];
         }
-        if ($configuration->hasHashConfigFlag(HashConfiguration::FLAG_HASH_QUERY)) {
-            $hashParts['query'] = $urlParts['query'];
+
+        // Take a note on the extra check for empty query string in $urlParts. If no query string was provided in
+        // original url, it must be omitted in the hash parts to prevent a "orphaned" trailing question mark.
+        if ($configuration->hasHashConfigFlag(HashConfiguration::FLAG_HASH_QUERY) && !empty($urlParts['query'])) {
+            $hashParts['query'] = QueryString::normalizeQueryString($urlParts['query']);
         }
         if ($configuration->hasHashConfigFlag(HashConfiguration::FLAG_HASH_FRAGMENT)) {
             $hashParts['fragment'] = $urlParts['fragment'];
@@ -61,3 +64,4 @@ abstract class SignatureGenerator
         return $hashParts;
     }
 }
+

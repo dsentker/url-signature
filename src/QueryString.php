@@ -5,7 +5,9 @@ namespace UrlSignature;
 use League\Uri\Parser\QueryString as LeagueQueryString;
 
 /**
- * This class acts as a facade to League\Uri\Parser\QueryString to simplify the conversion of array parts.
+ * This class acts as a facade to League\Uri\Parser\QueryString to simplify the string-array-conversion of query string
+ * parts. It fulfills two main issues. The first issue is that the query string parameters can be in mixed order, so the
+ * generated hash value will not match. This facade maintains the ordering of all parameters to guarantee equal hashes.
  * In League Query String, the query parts looks like this:
  * $foo = [
  *      ['key1', 'value1'],
@@ -50,15 +52,13 @@ class QueryString
     }
 
     /**
-     * @param array<string, string> $keyValuePairs
-     *
-     * @return string
+     * Sort the keys alphabetically to ensure that the same order is always maintained - this is necessary so that
+     * the hash is identical even if the order from the query string is different.
+     * @param array $keyValuePairs
+     * @return array
      */
-    public static function build(array $keyValuePairs): string
+    public static function normalizeKeyValuePairs(array $keyValuePairs): array
     {
-
-        // Sort the keys alphabetically to ensure that the same order is always maintained - this is necessary so that
-        // the hash is identical even if the order from the query string is different.
         ksort($keyValuePairs);
 
         $pairs = [];
@@ -66,13 +66,32 @@ class QueryString
             $pairs[] = [$key, $value];
         }
 
-        return (string) LeagueQueryString::build($pairs);
+        return $pairs;
+    }
+
+    public static function normalizeQueryString(string $queryString): string
+    {
+        return LeagueQueryString::build(
+            self::normalizeKeyValuePairs(
+                self::getKeyValuePairs($queryString)
+            )
+        );
+    }
+
+    /**
+     * Create a query string based on key-value pairs. The $keyValuePairs will be normalized.
+     * @param array<string, string> $keyValuePairs
+     */
+    public static function build(array $keyValuePairs): string
+    {
+
+        return (string)LeagueQueryString::build(self::normalizeKeyValuePairs($keyValuePairs));
     }
 
     public static function append(?string $query, string $key, string $value): ?string
     {
 
-        if(empty($query)) {
+        if (empty($query)) {
             return static::build([$key => $value]);
         }
 

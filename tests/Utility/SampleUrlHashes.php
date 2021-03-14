@@ -42,46 +42,13 @@ class SampleUrlHashes
             ['https://subdomain.example.com:81/foo?bar=baz&qux=pax#fragment', '42e3f2c4405f4d88b22e1ee72d7be22da3f1268ca1016f0d0578d28dae06bf01'],
             ['relative/path/to/foo', '488a2ca689ae82ddf409bae55c0e365b7d4420803092f07e2acc9c7ff896ad11'],
             ['/foo?bar', '1a3f67f174bc3091412be2ab4031f0186fbe1043cb7b0e5de8ac316409a9999e'],
-            ['/foo/an-unusal-long-uri-with-special%20characters?which&should=be_no_problem', 'ab8c844ffe7121e8501f47dbaf5b087d88b3ca56b208e59ba037c7ce615f3c0f'],
+            ['/foo/an-unusual-long-uri-with-special%20characters?which&should=be_no_problem', 'c47570105ae8e69a562ac824f05e452e9987bd6d66ff6e691fa0d4b3db7e6a20'],
             ['/foo/?bar=qux', '6d707feee25e4dc579efbeda5b1f55c7f1eab228d33fa74444c39c887693bb6f'],
+            ['/foo?aaa=zzz&yyy=bbb', '15f9efefce86450575bda3d41ba9fdb6dec41701bc450523c2ebee190e630079'],
+            ['/foo?yyy=bbb&aaa=zzz', '15f9efefce86450575bda3d41ba9fdb6dec41701bc450523c2ebee190e630079'],
             ['/', 'd603a7eee64f1e0f9bc9388a7fdf18ebddab6c5676220b613a7f6f3c90a9ebfc'],
+            // This will fail as this library is not able to build a hash for multidimensional arrays.
+            // ['/foo?z=&services%5B0%5D=157&services%5B1%5D=8&services%5B2%5D=11', '42a9ba216777e63e477be482fb709d12cea28260c3b1396948fef4df5f8f33ee'],
         ];
     }
-
-    public function generateForOutput()
-    {
-        foreach([
-                    'http://example.com',
-                    'http://example.com?foo=bar',
-                    'http://example.com/',
-                    'http://example.com/foo',
-                    'http://example.com/?foo',
-                    'http://example.com/foo?bar',
-                    'http://example.com/foo?bar=',
-                    'http://example.com/foo?bar=baz',
-                    'http://example.com/foo?bar=baz&qux=pax',
-                    'https://example.com',
-                    'https://example.com?foo=bar',
-                    'https://example.com/',
-                    'https://example.com/foo',
-                    'https://example.com/?foo',
-                    'https://example.com/foo?bar',
-                    'https://example.com/foo?bar=',
-                    'https://example.com/foo?bar=baz',
-                    'https://example.com/foo?bar=baz&qux=pax',
-                    'https://example.com/foo?bar=baz&qux=pax#fragment',
-                    'https://example.com:81/foo?bar=baz&qux=pax#fragment',
-                    'https://subdomain.example.com:81/foo?bar=baz&qux=pax#fragment',
-                    'relative/path/to/foo',
-                    '/foo?bar',
-                    '/foo/an-unusal-long-uri-with-special%20characters?which&should=be_no_problem',
-                    '/foo/?bar=qux',
-                    '/'
-                ] as $url) {
-
-            printf("['%s', '%s'],<br>", $url, hash_hmac('SHA256', $url, 'secure-key'));
-        }
-
-    }
-
 }

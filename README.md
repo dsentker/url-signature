@@ -115,25 +115,35 @@ $config->setHashMask(
         );
 ```
 
-## A Word about Security ##
+## Limitations and Security notes ##
 This library creates a hash from one or more URL parts. That means, that the URL is only valid if the given signature matches the current signature. Like any other hash event (for example, hashing passwords), this is considered quite secure. For a signed URL to be truly secure, the developer must ensure that (when receiving a request) a check is made as to whether a hash check is required and / or whether the submitted signature is correct. In other words, **if the user has the ability to retrieve a URL without a signature, the best hashing algorithm will not work**.
 
 ### Do NOT use this library if... ###
-* ...you are unsure whether the processing part of the request (e.g., the controller) can check the hash at any time.
+* ...you are not 100% sure whether the processing part of the request (e.g., the controller) can check the hash at any time.
 * ...your goal is to prevent the distribution of URLs to unauthorized persons (that is not the purpose of this library!)
 * ...this library is the only auditing mechanism designed to prevent a user from retrieving content that is not intended for them.
+* ...you want to validate an hash URI hash where the URI contains arrays in query string (see [issue #3](https://github.com/dsentker/url-signature/issues/3))
 
 ## Credits
-Based on the ideas by [psecio](https://github.com/psecio), the project was forked by [dsentker](https://github.com/dsentker) (that's me 😁) to upgrade the code for PHP 7.x applications. The adjustments then resulted in a separate library (this one) and a symfony bundle.
+Based on the ideas by [psecio](https://github.com/psecio), the project was forked by [me](https://github.com/dsentker) to upgrade the code for PHP 7.x applications. The adjustments then resulted in a separate library (this one) and a symfony bundle.
 
 ## Dependencies
 The library uses the URL functions of [thephpleague/uri](https://github.com/thephpleague/uri) to parse, extract and (re-)build URL components. For unit tests, PhpUnit is used. 
 
-## Submitting bugs and feature requests
+## I look forward to your help!
+If you notice bugs, have general questions or want to implement a feature, you are welcome to collaborate.
+
+### Roadmap
+- PHP 8 Support (I think there will be no problems)
+- Drop support for PHP 7.2 (use 7.4 for legacy stuff and make a url-signature 2.x for PHP 8)
+- Refactor the hash process, provide a solution for issue #3
+- Split this repository to two standalone versions: An URL/URI Hasher _and_ Validator…?
+
+### Submitting bugs and feature requests
 Bugs and feature request are tracked on GitHub.
 
-## Symfony 4 Bundle
-I also created [a bundle for Symfony4](https://github.com/dsentker/url-signature-bundle/) (with twig support and annotations).  
+## Symfony 4/5 Bundle
+I also created [a bundle for Symfony](https://github.com/dsentker/url-signature-bundle/) (with twig support and annotations).  
 
 ## Testing
 `./vendor/bin/phpunit`
