@@ -24,6 +24,8 @@ class SampleUrlHashes
             ['http://example.com/', '959d0519b205e74218f4c4c76a7ae0a712f4f59f3085c483b74db9ac31f4b593'],
             ['http://example.com/foo', '2808c9d8b7e962eaf8a6eab96935c4b91033745008888242ede74fc32bf80a8c'],
             ['http://example.com/?foo', '52ff06b63ccf19cb3152ee0e16674ebaa9d5c1e06c5081faf08c97b18fddcbff'],
+            ['http://example.com/foo?', '2808c9d8b7e962eaf8a6eab96935c4b91033745008888242ede74fc32bf80a8c'],
+            ['//example.com/foo', '09bff62694e9e0b0e9f6bce71c78a76fad50fa300ada0767afdad0faccada56b'],
             ['http://example.com/foo?bar', '1c09187104eeb827716e3dea6a16f785ea290f576b4cdf133b528d32d37e8290'],
             ['http://example.com/foo?bar=', '33c82515dee1ca31b2f376c537b3f404308f32ec4a72ffdb42268a682dda0c2a'],
             ['http://example.com/foo?bar=baz', 'e268ab02cbc305e01b02d1a98b89d06841db10b2ea731decc0d79cbfbf176487'],
