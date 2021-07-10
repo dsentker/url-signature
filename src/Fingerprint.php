@@ -1,6 +1,6 @@
 <?php
 
-namespace UrlHasher;
+namespace UrlFingerprint;
 
 class Fingerprint
 {

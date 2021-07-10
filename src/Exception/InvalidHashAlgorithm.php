@@ -1,10 +1,10 @@
 <?php
 
-namespace UrlHasher\Exception;
+namespace UrlFingerprint\Exception;
 
-class InvalidHashAlgorithm extends \RuntimeException
+final class InvalidHashAlgorithm extends \RuntimeException
 {
-    public static function hashUnknown(string $algo)
+    public static function hashUnknown(string $algo): InvalidHashAlgorithm
     {
         return new self(sprintf('Hash unknown: "%s"!', $algo));
     }

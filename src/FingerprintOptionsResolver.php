@@ -1,9 +1,9 @@
 <?php
-namespace UrlHasher;
+namespace UrlFingerprint;
 
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-final class HashOptionsResolver extends OptionsResolver
+final class FingerprintOptionsResolver extends OptionsResolver
 {
 
     public function __construct()

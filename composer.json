@@ -1,5 +1,5 @@
 {
-  "name": "dsentker/urlhasher",
+  "name": "dsentker/url-fingerprint",
   "type": "library",
   "description": "Build a hash from a url",
   "keywords": [
@@ -39,12 +39,12 @@
   },
   "autoload": {
     "psr-4": {
-      "UrlHasher\\": "src"
+      "UrlFingerprint\\": "src"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "UrlHasherTest\\": "tests"
+      "UrlFingerprintTest\\": "tests"
     }
   },
   "config": {

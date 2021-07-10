@@ -1,20 +1,20 @@
 <?php
 
-namespace UrlHasherTest;
+namespace UrlFingerprintTest;
 
 use PHPUnit\Framework\TestCase;
-use UrlHasher\Exception\InvalidUrl;
-use UrlHasher\UrlHasher;
+use UrlFingerprint\Exception\InvalidUrl;
+use UrlFingerprint\FingerprintReader;
 
-class UrlHasherTest extends TestCase
+class FingerprintReaderTest extends TestCase
 {
     public function testHashAlgoIsRecognized()
     {
-        $urlHasher = new UrlHasher([
+        $reader = new FingerprintReader([
             'secret'    => '42',
             'hash_algo' => 'md5',
         ]);
-        $urlHash = $urlHasher->getFingerprint('https://www.example.com');
+        $urlHash = $reader->capture('https://www.example.com');
 
         $this->assertEquals('md5', $urlHash->getHashAlgo());
     }
@@ -24,11 +24,11 @@ class UrlHasherTest extends TestCase
      */
     public function testQueryStringIsSorted(string $expected, string $url, string $message = null)
     {
-        $urlHasher = new UrlHasher([
+        $reader = new FingerprintReader([
             'secret'    => '42',
             'hash_algo' => 'md5',
         ]);
-        $urlHash = $urlHasher->getFingerprint($url);
+        $urlHash = $reader->capture($url);
 
         $this->assertEquals(
             $expected,
@@ -42,11 +42,11 @@ class UrlHasherTest extends TestCase
      */
     public function testHashOptionsAreHonored(string $urlToTest, array $hashOptions, string $expectedSkeleton)
     {
-        $urlHasher = new UrlHasher(array_merge([
+        $reader = new FingerprintReader(array_merge([
             'secret'    => '42',
             'hash_algo' => 'md5',
         ], $hashOptions));
-        $urlHash = $urlHasher->getFingerprint($urlToTest);
+        $urlHash = $reader->capture($urlToTest);
 
         $this->assertEquals(
             $expectedSkeleton,
@@ -56,40 +56,40 @@ class UrlHasherTest extends TestCase
 
     public function testHashIsValid()
     {
-        $urlHasher = new UrlHasher([
+        $reader = new FingerprintReader([
             'secret'    => '42',
             'hash_algo' => 'md5',
         ]);
-        $urlHash = $urlHasher->getFingerprint('https://www.example.com');
+        $fingerprint = $reader->capture('https://www.example.com');
 
-        $this->assertIsString($urlHash->getHash());
-        $this->assertEquals(32, strlen($urlHash->getHash()));
+        $this->assertIsString($fingerprint->getHash());
+        $this->assertEquals(32, strlen($fingerprint->getHash()));
     }
 
     public function testMissingRequiredScheme()
     {
         $this->expectException(InvalidUrl::class);
         $this->expectExceptionMessage('The scheme for url (//www.example.com) is missing!');
-        $urlHasherEnforcingScheme = new UrlHasher([
+        $readerEnforcingScheme = new FingerprintReader([
             'secret'      => '42',
             'hash_algo'   => 'md5',
             'hash_scheme' => true,
         ]);
-        $urlHasherEnforcingScheme->getFingerprint('//www.example.com');
+        $readerEnforcingScheme->capture('//www.example.com');
     }
 
     public function testMissingScheme()
     {
-        $urlHasherEnforcingScheme = new UrlHasher([
+        $reader = new FingerprintReader([
             'secret'      => '42',
             'hash_algo'   => 'md5',
             'hash_scheme' => false,
         ]);
-        $urlHashEnforcingScheme = $urlHasherEnforcingScheme->getFingerprint('//www.example.com');
+        $fingerprint = $reader->capture('//www.example.com');
 
         $this->assertEquals(
             '{"hash_scheme":null,"hash_userinfo":null,"hash_host":"www.example.com","hash_port":null,"hash_path":"","hash_query":null,"hash_fragment":null}',
-            $urlHashEnforcingScheme->getGist()
+            $fingerprint->getGist()
         );
     }
 
@@ -97,23 +97,23 @@ class UrlHasherTest extends TestCase
     {
         $this->expectException(InvalidUrl::class);
         $this->expectExceptionMessage('The URL string is empty!');
-        $urlHasherEnforcingScheme = new UrlHasher([
+        $fingerprintReader = new FingerprintReader([
             'secret'      => '42',
             'hash_algo'   => 'md5',
             'hash_scheme' => true,
         ]);
-        $urlHasherEnforcingScheme->getFingerprint('');
+        $fingerprintReader->capture('');
     }
 
     public function testEmptyCharactersSurroundingUrlWillNotAffectTheResult()
     {
-        $urlHasher = new UrlHasher([
+        $reader = new FingerprintReader([
             'secret'        => '42',
             'hash_algo'     => 'md5',
             'hash_scheme'   => true,
             'hash_fragment' => true,
         ]);
-        $urlHash = $urlHasher->getFingerprint(' https://www.example.com/#anchor ');
+        $urlHash = $reader->capture(' https://www.example.com/#anchor ');
 
         $this->assertEquals(
             '{"hash_scheme":"https","hash_userinfo":null,"hash_host":"www.example.com","hash_port":null,"hash_path":"/","hash_query":null,"hash_fragment":"anchor"}',
@@ -125,25 +125,78 @@ class UrlHasherTest extends TestCase
     {
         $this->expectException(InvalidUrl::class);
         $this->expectExceptionMessage('The uri `https://` is invalid for the `https` scheme.');
-        $urlHash = new UrlHasher([
+        $reader = new FingerprintReader([
             'secret'      => '42',
             'hash_algo'   => 'md5',
             'hash_scheme' => true,
         ]);
-        $urlHash->getFingerprint('https://');
+        $reader->capture('https://');
     }
 
     public function testUrlPathWithWhitespace()
     {
-        $urlHasherEnforcingScheme = new UrlHasher([
+        $reader = new FingerprintReader([
             'secret'      => '42',
             'hash_algo'   => 'md5',
             'hash_scheme' => false,
         ]);
-        $urlHash = $urlHasherEnforcingScheme->getFingerprint('//example.com/foo bar/baz');
+        $urlHash = $reader->capture('//example.com/foo bar/baz');
         $this->assertEquals(
             '{"hash_scheme":null,"hash_userinfo":null,"hash_host":"example.com","hash_port":null,"hash_path":"/foo%20bar/baz","hash_query":null,"hash_fragment":null}',
             $urlHash->getGist()
+        );
+    }
+
+    public function testCompareFingerprints()
+    {
+        $reader = new FingerprintReader([
+            'secret'        => '42',
+            'hash_algo'     => 'md5',
+            'hash_scheme'   => false,
+            'hash_query'    => false,
+            'hash_fragment' => false,
+        ]);
+        $urlHash1 = $reader->capture('http://www.example.com/foo/bar/?qux=baz');
+        $urlHash2 = $reader->capture('https://www.example.com/foo/bar/#anchor');
+
+        $this->assertTrue(
+            $reader->compare($urlHash1, $urlHash2),
+            sprintf('Assert that gist %s%s equals gist %s%s.', PHP_EOL, $urlHash1->getGist(), PHP_EOL,
+                $urlHash2->getGist())
+        );
+    }
+
+    public function testCompareFingerprintsShouldPassWithDifferentQueryParameterOrder()
+    {
+        $reader = new FingerprintReader([
+            'secret'        => '42',
+            'hash_algo'     => 'md5',
+            'hash_query'    => true,
+        ]);
+        $urlHash1 = $reader->capture('https://www.example.com/foo/?ananas=baz&banana=qux&citrus');
+        $urlHash2 = $reader->capture('https://www.example.com/foo/?citrus&banana=qux&ananas=baz');
+
+        $this->assertTrue(
+            $reader->compare($urlHash1, $urlHash2),
+            sprintf('Assert that gist %s%s equals gist %s%s.', PHP_EOL, $urlHash1->getGist(), PHP_EOL,
+                $urlHash2->getGist())
+        );
+    }
+
+    public function testCompareFingerprintsShouldFailWithDifferentQueryValues()
+    {
+        $reader = new FingerprintReader([
+            'secret'        => '42',
+            'hash_algo'     => 'md5',
+            'hash_query'    => true,
+        ]);
+        $urlHash1 = $reader->capture('https://www.example.com/foo/?ananas=&banana=qux&citrus');
+        $urlHash2 = $reader->capture('https://www.example.com/foo/?citrus&banana=qux&ananas=baz');
+
+        $this->assertFalse(
+            $reader->compare($urlHash1, $urlHash2),
+            sprintf('Assert that gist %s%s is not equal to gist %s%s.', PHP_EOL, $urlHash1->getGist(), PHP_EOL,
+                $urlHash2->getGist())
         );
     }
 

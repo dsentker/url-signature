@@ -1,6 +1,6 @@
 <?php
 
-namespace UrlHasher\Exception;
+namespace UrlFingerprint\Exception;
 
 use League\Uri\Exceptions\SyntaxError;
 

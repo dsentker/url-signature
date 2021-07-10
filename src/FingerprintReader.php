@@ -1,22 +1,22 @@
 <?php
 
-namespace UrlHasher;
+namespace UrlFingerprint;
 
 use League\Uri\Components\Query;
 use League\Uri\Exceptions\SyntaxError;
 use League\Uri\Uri;
 use League\Uri\UriModifier;
-use UrlHasher\Exception\InvalidHashAlgorithm;
-use UrlHasher\Exception\InvalidUrl;
+use UrlFingerprint\Exception\InvalidHashAlgorithm;
+use UrlFingerprint\Exception\InvalidUrl;
 
-final class UrlHasher
+final class FingerprintReader
 {
 
     private array $options;
 
     public function __construct(array $options)
     {
-        $this->options = (new HashOptionsResolver())->resolve($options);
+        $this->options = (new FingerprintOptionsResolver())->resolve($options);
     }
 
     private function serializeUrlParts(array $parts): string
@@ -45,7 +45,7 @@ final class UrlHasher
      * @throws InvalidUrl
      * @throws \JsonException
      */
-    public function getFingerprint(string $url): Fingerprint
+    public function capture(string $url): Fingerprint
     {
 
         $url = trim($url);
@@ -84,16 +84,28 @@ final class UrlHasher
 
         $gist = $this->serializeUrlParts($hashedParts);
 
-        $hash = hash_hmac(
-            $this->options['hash_algo'],
-            $gist,
-            $this->options['secret']
-        );
+        $hash = $this->getHash($gist);
 
-        if (false === $hash) {
+        if (null === $hash) {
             throw InvalidHashAlgorithm::hashUnknown($this->options['algo']);
         }
 
         return new Fingerprint($gist, $this->options['hash_algo'], $hash);
+    }
+
+    public function compare(Fingerprint $known, Fingerprint $fingerprint): bool
+    {
+        return hash_equals(
+            $this->getHash($known->getGist()),
+            $this->getHash($fingerprint->getGist())
+        );
+    }
+
+    private function getHash(string $string): ?string {
+        return hash_hmac(
+            $this->options['hash_algo'],
+            $string,
+            $this->options['secret']
+        ) ?: null;
     }
 }

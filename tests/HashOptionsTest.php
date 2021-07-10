@@ -1,19 +1,19 @@
 <?php
 
-namespace UrlHasherTest;
+namespace UrlFingerprintTest;
 
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
 use Symfony\Component\OptionsResolver\Exception\MissingOptionsException;
 use Symfony\Component\OptionsResolver\Exception\UndefinedOptionsException;
-use UrlHasher\HashOptionsResolver;
+use UrlFingerprint\FingerprintOptionsResolver;
 
 class HashOptionsTest extends TestCase
 {
     public function testExceptionIsThrownWhenSecretIsMissing()
     {
         $this->expectException(MissingOptionsException::class);
-        (new HashOptionsResolver())->resolve([]);
+        (new FingerprintOptionsResolver())->resolve([]);
     }
 
     /**
@@ -22,7 +22,7 @@ class HashOptionsTest extends TestCase
     public function testExceptionIsThrownWhenSecretHasInvalidType($value)
     {
         $this->expectException(InvalidOptionsException::class);
-        (new HashOptionsResolver())->resolve([
+        (new FingerprintOptionsResolver())->resolve([
             'secret' => $value,
         ]);
     }
@@ -30,7 +30,7 @@ class HashOptionsTest extends TestCase
     public function testExceptionIsThrownWhenSecretIsEmptyString()
     {
         $this->expectException(InvalidOptionsException::class);
-        (new HashOptionsResolver())->resolve([
+        (new FingerprintOptionsResolver())->resolve([
             'secret' => '',
         ]);
     }
@@ -38,7 +38,7 @@ class HashOptionsTest extends TestCase
     public function testExceptionIsThrownWhenHashAlgoIsNotSupported()
     {
         $this->expectException(InvalidOptionsException::class);
-        (new HashOptionsResolver())->resolve([
+        (new FingerprintOptionsResolver())->resolve([
             'secret' => '42',
             'hash_algo' => 'thisIsNotAHashAlgorithm',
         ]);
@@ -47,7 +47,7 @@ class HashOptionsTest extends TestCase
     public function testExceptionIsThrownWhenInvalidOptionPassed()
     {
         $this->expectException(UndefinedOptionsException::class);
-        (new HashOptionsResolver())->resolve([
+        (new FingerprintOptionsResolver())->resolve([
             'secret' => '42',
             'not_an_option' => 1337,
         ]);
@@ -61,7 +61,7 @@ class HashOptionsTest extends TestCase
         $invalidValues = [null, 'true', '', new \stdClass()];
         foreach ($invalidValues as $invalidValue) {
             $this->expectException(InvalidOptionsException::class);
-            (new HashOptionsResolver())->resolve([
+            (new FingerprintOptionsResolver())->resolve([
                 'secret' => '42',
                 $booleanOptionKey => $invalidValue
             ]);

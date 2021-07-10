@@ -1,9 +1,9 @@
 <?php
 
-namespace UrlHasherTest;
+namespace UrlFingerprintTest;
 
 use PHPUnit\Framework\TestCase;
-use UrlHasher\Fingerprint;
+use UrlFingerprint\Fingerprint;
 
 class FingerprintTest extends TestCase
 {
