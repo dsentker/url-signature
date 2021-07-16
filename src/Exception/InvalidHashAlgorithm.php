@@ -4,8 +4,8 @@ namespace UrlFingerprint\Exception;
 
 final class InvalidHashAlgorithm extends \RuntimeException
 {
-    public static function hashUnknown(string $algo): InvalidHashAlgorithm
+    public static function unknownAlgorithm(string $algo): InvalidHashAlgorithm
     {
-        return new self(sprintf('Hash unknown: "%s"!', $algo));
+        return new self(sprintf('Hash algorithm unknown: "%s"!', $algo));
     }
 }
