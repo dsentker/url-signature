@@ -1,6 +1,6 @@
 # UrlFingerprint
 
-A library that creates unique hash values from a URL.
+A library that creates a unique hash value from a URL - without getting a headache.
 
 ## The problem
 
@@ -96,7 +96,7 @@ $reader->compare($fingerprint1, $fingerprint2); // false
 ## Testing
 `$ ./vendor/bin/phpunit tests`
 
-## CONTRIBUTING
+## Contributing
 If you notice bugs, have general questions or want to implement a feature, you are welcome to collaborate.
 
 Please see [CONTRIBUTING](CONTRIBUTING.md) for details.
