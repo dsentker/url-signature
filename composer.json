@@ -15,7 +15,8 @@
     "parse_str",
     "query-string",
     "querystring",
-    "hostname"
+    "hostname",
+    "fingerprinting"
   ],
   "license": "GPL-2.0-or-later",
   "homepage": "https://github.com/dsentker/urlhasher",
