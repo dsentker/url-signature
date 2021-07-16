@@ -2,6 +2,7 @@
 
 namespace UrlFingerprint;
 
+use JsonException;
 use League\Uri\Components\Query;
 use League\Uri\Exceptions\SyntaxError;
 use League\Uri\Uri;
@@ -43,7 +44,7 @@ final class FingerprintReader
 
     /**
      * @throws InvalidUrl
-     * @throws \JsonException
+     * @throws JsonException
      */
     public function capture(string $url): Fingerprint
     {
@@ -84,24 +85,24 @@ final class FingerprintReader
 
         $gist = $this->serializeUrlParts($hashedParts);
 
-        $hash = $this->getHash($gist);
+        $digest = $this->getDigest($gist);
 
-        if (null === $hash) {
-            throw InvalidHashAlgorithm::hashUnknown($this->options['algo']);
+        if (null === $digest) {
+            throw InvalidHashAlgorithm::unknownAlgorithm($this->options['hash_algo']);
         }
 
-        return new Fingerprint($gist, $this->options['hash_algo'], $hash);
+        return new Fingerprint($gist, $this->options['hash_algo'], $digest);
     }
 
     public function compare(Fingerprint $known, Fingerprint $fingerprint): bool
     {
         return hash_equals(
-            $this->getHash($known->getGist()),
-            $this->getHash($fingerprint->getGist())
+            $this->getDigest($known->getGist()),
+            $this->getDigest($fingerprint->getGist())
         );
     }
 
-    private function getHash(string $string): ?string {
+    private function getDigest(string $string): ?string {
         return hash_hmac(
             $this->options['hash_algo'],
             $string,

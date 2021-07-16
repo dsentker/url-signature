@@ -31,7 +31,7 @@ final class FingerprintOptionsResolver extends OptionsResolver
             ->allowedTypes('string');
 
         $this->define('hash_algo')
-            ->default('sha_256')
+            ->default('sha256')
             ->required()
             ->allowedValues(function($value) {
                 return in_array($value, hash_hmac_algos(), true);

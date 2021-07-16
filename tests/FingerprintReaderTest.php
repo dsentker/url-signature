@@ -3,6 +3,7 @@
 namespace UrlFingerprintTest;
 
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
 use UrlFingerprint\Exception\InvalidUrl;
 use UrlFingerprint\FingerprintReader;
 
@@ -26,7 +27,6 @@ class FingerprintReaderTest extends TestCase
     {
         $reader = new FingerprintReader([
             'secret'    => '42',
-            'hash_algo' => 'md5',
         ]);
         $urlHash = $reader->capture($url);
 
@@ -62,8 +62,8 @@ class FingerprintReaderTest extends TestCase
         ]);
         $fingerprint = $reader->capture('https://www.example.com');
 
-        $this->assertIsString($fingerprint->getHash());
-        $this->assertEquals(32, strlen($fingerprint->getHash()));
+        $this->assertIsString($fingerprint->getDigest());
+        $this->assertEquals(32, strlen($fingerprint->getDigest()));
     }
 
     public function testMissingRequiredScheme()
@@ -198,6 +198,15 @@ class FingerprintReaderTest extends TestCase
             sprintf('Assert that gist %s%s is not equal to gist %s%s.', PHP_EOL, $urlHash1->getGist(), PHP_EOL,
                 $urlHash2->getGist())
         );
+    }
+
+    public function testExceptionIsThrownWithInvalidHashAlgo()
+    {
+        $this->expectException(InvalidOptionsException::class);
+        new FingerprintReader([
+            'secret'        => '42',
+            'hash_algo'     => 'iDoNotExist',
+        ]);
     }
 
     public function getUrlsWithQueryToSort()

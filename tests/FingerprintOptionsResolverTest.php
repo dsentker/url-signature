@@ -3,12 +3,13 @@
 namespace UrlFingerprintTest;
 
 use PHPUnit\Framework\TestCase;
+use stdClass;
 use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
 use Symfony\Component\OptionsResolver\Exception\MissingOptionsException;
 use Symfony\Component\OptionsResolver\Exception\UndefinedOptionsException;
 use UrlFingerprint\FingerprintOptionsResolver;
 
-class HashOptionsTest extends TestCase
+class FingerprintOptionsResolverTest extends TestCase
 {
     public function testExceptionIsThrownWhenSecretIsMissing()
     {
@@ -39,7 +40,7 @@ class HashOptionsTest extends TestCase
     {
         $this->expectException(InvalidOptionsException::class);
         (new FingerprintOptionsResolver())->resolve([
-            'secret' => '42',
+            'secret'    => '42',
             'hash_algo' => 'thisIsNotAHashAlgorithm',
         ]);
     }
@@ -48,7 +49,7 @@ class HashOptionsTest extends TestCase
     {
         $this->expectException(UndefinedOptionsException::class);
         (new FingerprintOptionsResolver())->resolve([
-            'secret' => '42',
+            'secret'        => '42',
             'not_an_option' => 1337,
         ]);
     }
@@ -58,32 +59,32 @@ class HashOptionsTest extends TestCase
      */
     public function testHashFlagsMustBeBoolean(string $booleanOptionKey)
     {
-        $invalidValues = [null, 'true', '', new \stdClass()];
+        $invalidValues = [null, 'true', '', new stdClass()];
         foreach ($invalidValues as $invalidValue) {
             $this->expectException(InvalidOptionsException::class);
             (new FingerprintOptionsResolver())->resolve([
-                'secret' => '42',
-                $booleanOptionKey => $invalidValue
+                'secret'          => '42',
+                $booleanOptionKey => $invalidValue,
             ]);
         }
     }
 
-    public function getInvalidSecretValues()
+    public function getInvalidSecretValues(): iterable
     {
         yield [null];
         yield [42];
-        yield [new \stdClass()];
+        yield [new stdClass()];
     }
 
-    public function getInvalidBooleanValues()
+    public function getInvalidBooleanValues(): iterable
     {
         yield [null];
         yield ['true'];
         yield [''];
-        yield [new \stdClass()];
+        yield [new stdClass()];
     }
 
-    public function getBooleanOptions()
+    public function getBooleanOptions(): iterable
     {
         return [
             ['hash_scheme'],
@@ -95,5 +96,4 @@ class HashOptionsTest extends TestCase
             ['hash_fragment'],
         ];
     }
-
 }

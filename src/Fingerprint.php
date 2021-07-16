@@ -2,19 +2,19 @@
 
 namespace UrlFingerprint;
 
-class Fingerprint
+final class Fingerprint
 {
     private string $gist;
 
     private string $hashAlgo;
 
-    private string $hash;
+    private string $digest;
 
-    public function __construct(string $gist, string $hashAlgo, string $hash)
+    public function __construct(string $gist, string $hashAlgo, string $digest)
     {
         $this->gist = $gist;
         $this->hashAlgo = $hashAlgo;
-        $this->hash = $hash;
+        $this->digest = $digest;
     }
 
     public function getGist(): string
@@ -27,13 +27,13 @@ class Fingerprint
         return $this->hashAlgo;
     }
 
-    public function getHash(): string
+    public function getDigest(): string
     {
-        return $this->hash;
+        return $this->digest;
     }
 
     public function __toString(): string
     {
-        return $this->hash;
+        return $this->digest;
     }
 }
