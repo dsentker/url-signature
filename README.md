@@ -55,6 +55,12 @@ echo $fingerprint2->getDigest(); // d7335d0a237f47a049415a780c4e1c96 - the same
 $reader->compare($fingerprint1, $fingerprint2); // true
 ```
 
+## Installation and requirements
+```bash
+composer require dsentker/url-fingerprint
+```
+Composer 2 and PHP >= 7.4 is required.
+
 ## Options
 Configure options in the  constructor to specify the way the digest is created:
 
