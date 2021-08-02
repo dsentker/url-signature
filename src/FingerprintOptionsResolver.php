@@ -1,4 +1,5 @@
 <?php
+
 namespace UrlFingerprint;
 
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -25,7 +26,7 @@ final class FingerprintOptionsResolver extends OptionsResolver
 
         $this->define('secret')
             ->required()
-            ->allowedValues(function($value) {
+            ->allowedValues(function ($value) {
                 return mb_strlen($value) > 0;
             })
             ->allowedTypes('string');
@@ -33,7 +34,7 @@ final class FingerprintOptionsResolver extends OptionsResolver
         $this->define('hash_algo')
             ->default('sha256')
             ->required()
-            ->allowedValues(function($value) {
+            ->allowedValues(function ($value) {
                 return in_array($value, hash_hmac_algos(), true);
             })
             ->allowedTypes('string');
