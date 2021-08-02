@@ -22,8 +22,8 @@ $fingerprint2 = $reader->capture('http://www.example.com/info?details&id=42');
 
 $reader->compare($fingerprint1, $fingerprint2); // bool(true)
 
-echo $fingerprint1->getDigest(); // d7335d0a237f47a049415a780c4e1c96
-echo $fingerprint2->getDigest(); // d7335d0a237f47a049415a780c4e1c96 - the same
+echo $fingerprint1->digest; // d7335d0a237f47a049415a780c4e1c96
+echo $fingerprint2->digest; // d7335d0a237f47a049415a780c4e1c96 - the same
 ```
 
 ## Installation & Usage
@@ -44,9 +44,9 @@ $reader = new \UrlFingerprint\FingerprintReader([
 # Capture a new fingerprint by given URL
 $fingerprint = $reader->capture('http://www.github.com/');
 
-echo $fingerprint->getDigest(); // the result from the hash process
-echo $fingerprint->getHashAlgo(); // md5
-echo $fingerprint->getGist(); // a JSON representation of the url parts
+echo $fingerprint->digest; // the result from the hash process
+echo $fingerprint->hashAlgo; // md5
+echo $fingerprint->gist; // a JSON representation of the url parts
 
 # Use the compare method to test against another fingerprint 
 $reader->compare($fingerprint, $reader->capture('http://github.com'));

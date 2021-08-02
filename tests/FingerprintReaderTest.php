@@ -17,7 +17,7 @@ class FingerprintReaderTest extends TestCase
         ]);
         $urlHash = $reader->capture('https://www.example.com');
 
-        $this->assertEquals('md5', $urlHash->getHashAlgo());
+        $this->assertEquals('md5', $urlHash->hashAlgo);
     }
 
     /**
@@ -32,7 +32,7 @@ class FingerprintReaderTest extends TestCase
 
         $this->assertEquals(
             $expected,
-            $urlHash->getGist(),
+            $urlHash->gist,
             $message
         );
     }
@@ -47,14 +47,14 @@ class FingerprintReaderTest extends TestCase
         $urlHash2 = $reader->capture('http://example.com/x.html?string=With Space+Plus');
 
         $this->assertSame(
-            $urlHash1->getGist(),
-            $urlHash2->getGist(),
+            $urlHash1->gist,
+            $urlHash2->gist,
             'The fingerpint should honor special characters like %20 in the URL'
         );
 
         $this->assertSame(
-            $urlHash1->getDigest(),
-            $urlHash2->getDigest(),
+            $urlHash1->digest,
+            $urlHash2->digest,
             'The digest should be same even if url contain characters which should be encoded like "%20"'
         );
     }
@@ -72,7 +72,7 @@ class FingerprintReaderTest extends TestCase
 
         $this->assertEquals(
             $expectedSkeleton,
-            $urlHash->getGist(),
+            $urlHash->gist,
         );
     }
 
@@ -84,8 +84,8 @@ class FingerprintReaderTest extends TestCase
         ]);
         $fingerprint = $reader->capture('https://www.example.com');
 
-        $this->assertIsString($fingerprint->getDigest());
-        $this->assertEquals(32, strlen($fingerprint->getDigest()));
+        $this->assertIsString($fingerprint->digest);
+        $this->assertEquals(32, strlen($fingerprint->digest));
     }
 
     public function testMissingRequiredScheme()
@@ -111,7 +111,7 @@ class FingerprintReaderTest extends TestCase
 
         $this->assertEquals(
             '{"hash_scheme":null,"hash_userinfo":null,"hash_host":"www.example.com","hash_port":null,"hash_path":"","hash_query":null,"hash_fragment":null}',
-            $fingerprint->getGist()
+            $fingerprint->gist
         );
     }
 
@@ -139,7 +139,7 @@ class FingerprintReaderTest extends TestCase
 
         $this->assertEquals(
             '{"hash_scheme":"https","hash_userinfo":null,"hash_host":"www.example.com","hash_port":null,"hash_path":"/","hash_query":null,"hash_fragment":"anchor"}',
-            $urlHash->getGist()
+            $urlHash->gist
         );
     }
 
@@ -165,7 +165,7 @@ class FingerprintReaderTest extends TestCase
         $urlHash = $reader->capture('//example.com/foo bar/baz');
         $this->assertEquals(
             '{"hash_scheme":null,"hash_userinfo":null,"hash_host":"example.com","hash_port":null,"hash_path":"/foo%20bar/baz","hash_query":null,"hash_fragment":null}',
-            $urlHash->getGist()
+            $urlHash->gist
         );
     }
 
@@ -183,8 +183,8 @@ class FingerprintReaderTest extends TestCase
 
         $this->assertTrue(
             $reader->compare($urlHash1, $urlHash2),
-            sprintf('Assert that gist %s%s equals gist %s%s.', PHP_EOL, $urlHash1->getGist(), PHP_EOL,
-                $urlHash2->getGist())
+            sprintf('Assert that gist %s%s equals gist %s%s.', PHP_EOL, $urlHash1->gist, PHP_EOL,
+                $urlHash2->gist)
         );
     }
 
@@ -200,8 +200,8 @@ class FingerprintReaderTest extends TestCase
 
         $this->assertTrue(
             $reader->compare($urlHash1, $urlHash2),
-            sprintf('Assert that gist %s%s equals gist %s%s.', PHP_EOL, $urlHash1->getGist(), PHP_EOL,
-                $urlHash2->getGist())
+            sprintf('Assert that gist %s%s equals gist %s%s.', PHP_EOL, $urlHash1->gist, PHP_EOL,
+                $urlHash2->gist)
         );
     }
 
@@ -217,8 +217,8 @@ class FingerprintReaderTest extends TestCase
 
         $this->assertFalse(
             $reader->compare($urlHash1, $urlHash2),
-            sprintf('Assert that gist %s%s is not equal to gist %s%s.', PHP_EOL, $urlHash1->getGist(), PHP_EOL,
-                $urlHash2->getGist())
+            sprintf('Assert that gist %s%s is not equal to gist %s%s.', PHP_EOL, $urlHash1->gist, PHP_EOL,
+                $urlHash2->gist)
         );
     }
 

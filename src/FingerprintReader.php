@@ -87,7 +87,7 @@ final class FingerprintReader
 
         $gist = $this->serializeUrlParts($hashedParts);
 
-        $digest = $this->getDigest($gist);
+        $digest = $this->createDigest($gist);
 
         if (null === $digest) {
             throw InvalidHashAlgorithm::unknownAlgorithm($this->options['hash_algo']);
@@ -102,12 +102,12 @@ final class FingerprintReader
     public function compare(Fingerprint $known, Fingerprint $fingerprint): bool
     {
         return hash_equals(
-            $this->getDigest($known->getGist()),
-            $this->getDigest($fingerprint->getGist())
+            $this->createDigest($known->gist),
+            $this->createDigest($fingerprint->gist)
         );
     }
 
-    private function getDigest(string $string): ?string
+    private function createDigest(string $string): ?string
     {
         return hash_hmac(
             $this->options['hash_algo'],

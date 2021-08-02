@@ -2,34 +2,24 @@
 
 namespace UrlFingerprint;
 
+/**
+ * A DAO representing the digest / hash result including hash input data.
+ * TODO Use constructor promotion in PHP 8.0
+ * TODO Use readonly properties in PHP 8.1
+ */
 final class Fingerprint
 {
-    private string $gist;
+    public string $gist;
 
-    private string $hashAlgo;
+    public string $hashAlgo;
 
-    private string $digest;
+    public string $digest;
 
     public function __construct(string $gist, string $hashAlgo, string $digest)
     {
         $this->gist = $gist;
         $this->hashAlgo = $hashAlgo;
         $this->digest = $digest;
-    }
-
-    public function getGist(): string
-    {
-        return $this->gist;
-    }
-
-    public function getHashAlgo(): string
-    {
-        return $this->hashAlgo;
-    }
-
-    public function getDigest(): string
-    {
-        return $this->digest;
     }
 
     public function __toString(): string
