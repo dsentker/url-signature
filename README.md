@@ -90,13 +90,12 @@ $reader = new \UrlFingerprint\FingerprintReader([
 $fingerprint1 = $reader->capture('https://www.example.com/?foo');
 $fingerprint2 = $reader->capture('https://www.example.com/?foo#bar');
 
-// Comparing both fingerprints will return false, because hash_fragment is set to true which means that also the
-// fragment part of the URL is taken into account. 
-$reader->compare($fingerprint1, $fingerprint2); 
+// Fingerprints are not the same - The fragment part of the URL is taken into account. 
+$reader->compare($fingerprint1, $fingerprint2); // false 
 ```
 
 ## Testing
-
+With PHPUnit:
 `$ ./vendor/bin/phpunit tests`
 
 ## Contributing
