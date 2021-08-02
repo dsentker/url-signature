@@ -2,9 +2,10 @@
 
 namespace UrlFingerprint\Exception;
 
+use InvalidArgumentException;
 use League\Uri\Exceptions\SyntaxError;
 
-class InvalidUrl extends \InvalidArgumentException
+class InvalidUrl extends InvalidArgumentException
 {
     public static function schemeIsMissing(string $url): InvalidUrl
     {

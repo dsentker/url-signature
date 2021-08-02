@@ -8,15 +8,19 @@ Generating a unique hash from a URL is useful, e.g. when caching API responses o
 of just hashing the URL can turn into a difficult task. Consider the following example:
 
 ```php
-$url = 'https://example.com/index.php?foo=bar&qux';
-$urlHash = hash('md5', $url);
+$urlHash = hash('md5', 'https://example.com/index.php?foo=bar&qux');
 ```
 
 This creates the same hash value (digest) each time. But what if the order of the query string parameters is changed?
 
 ```php
-$url = 'https://example.com/index.php?qux&foo=bar';
-$urlHash = hash('md5', $url);
+$url1 = 'https://example.com/index.php?foo=bar&qux';
+$url2 = 'https://example.com/index.php?qux&foo=bar';
+
+var_dump(
+    hash('md5', $url1),
+    hash('md5', $url2)
+); // false :-(
 ```
 
 The URL and the query parameters are technically the same, but the generated hash is different. There are more parts of
@@ -28,8 +32,8 @@ $url = 'http://example.com/'; // Different protocol
 $url = 'https://example.com/?'; // Empty query string
 ```
 
-All three URLs could be similar for your requirements and should therefore also generate the same hash result. This is
-what this library was built for.
+All three URLs could be similar according to your requirements and should therefore generate the same hash result. This
+is what this library was built for.
 
 ## The solution
 
@@ -48,21 +52,23 @@ $fingerprint1 = $reader->capture('http://www.example.com/info?id=42&details#foo'
 echo $fingerprint1->getDigest(); // d7335d0a237f47a049415a780c4e1c96
 echo $fingerprint1->getHashAlgo(); // 'sha256'
 
-// different query string order, fragment is missing
+// different parameter order in query string; fragment is missing
 $fingerprint2 = $reader->capture('http://www.example.com/info?details&id=42'); 
 echo $fingerprint2->getDigest(); // d7335d0a237f47a049415a780c4e1c96 - the same
 
 $reader->compare($fingerprint1, $fingerprint2); // true
 ```
 
-## Installation and requirements
+## Installation & Requirements
+
 ```bash
 composer require dsentker/url-fingerprint
 ```
-Composer 2 and PHP >= 7.4 is required.
+[Composer 2](https://getcomposer.org/2) and PHP >= 7.4 is required.
 
 ## Options
-Configure options in the  constructor to specify the way the digest is created:
+
+Configure options in the constructor to specify the way the digest is created:
 
 Option | Type | Default | Description
 --- | --- | --- | ---
@@ -73,10 +79,11 @@ Option | Type | Default | Description
 **`hash_host`** | boolean | true | Whether to hash the host name or not
 **`hash_port`** | boolean | false | Whether to hash the port
 **`hash_path`** | boolean | true | Whether to path of the URL (e.g. _/foo/index.php_)
-**`hash_query`** | boolean | true | Whether to hash the query string parts in the URL (Keys _and_ values). 
-**`hash_fragment`** | boolean | false | Whether to hash the fragment / hash suffix in the URL or not. 
+**`hash_query`** | boolean | true | Whether to hash the query string parts in the URL (Keys _and_ values).
+**`hash_fragment`** | boolean | false | Whether to hash the fragment / hash suffix in the URL or not.
 
 ### Example
+
 ```php
 $reader = new \UrlFingerprint\FingerprintReader([
     'secret' => 's3cre7v4lu3',
@@ -100,18 +107,21 @@ $reader->compare($fingerprint1, $fingerprint2); // false
 ```
 
 ## Testing
+
 `$ ./vendor/bin/phpunit tests`
 
 ## Contributing
+
 If you notice bugs, have general questions or want to implement a feature, you are welcome to collaborate.
 
 Please see [CONTRIBUTING](CONTRIBUTING.md) for details.
 
-
 ## Background
+
 This library replaces the predecessor, the [url-signature library](https://github.com/dsentker/url-signature).
 
 ### Motivation on rebuild
+
 Compared to the url-signature library, this library is rewritten completely and should solve the following drawbacks:
 
 - The url-signature library did not follow the Single-responsibility principle

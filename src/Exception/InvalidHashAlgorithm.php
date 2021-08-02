@@ -2,7 +2,9 @@
 
 namespace UrlFingerprint\Exception;
 
-final class InvalidHashAlgorithm extends \RuntimeException
+use RuntimeException;
+
+final class InvalidHashAlgorithm extends RuntimeException
 {
     public static function unknownAlgorithm(string $algo): InvalidHashAlgorithm
     {

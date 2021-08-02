@@ -20,6 +20,9 @@ final class FingerprintReader
         $this->options = (new FingerprintOptionsResolver())->resolve($options);
     }
 
+    /**
+     * @throws JsonException
+     */
     private function serializeUrlParts(array $parts): string
     {
         return json_encode($parts, JSON_THROW_ON_ERROR | JSON_UNESCAPED_SLASHES);
@@ -48,15 +51,14 @@ final class FingerprintReader
      */
     public function capture(string $url): Fingerprint
     {
-
         $url = trim($url);
-        if($url === '') {
+        if ($url === '') {
             throw InvalidUrl::isEmpty();
         }
 
         try {
             $uri = UriModifier::sortQuery(Uri::createFromString($url));
-        } catch(SyntaxError $error) {
+        } catch (SyntaxError $error) {
             throw InvalidUrl::syntaxError($error);
         }
 
@@ -94,6 +96,9 @@ final class FingerprintReader
         return new Fingerprint($gist, $this->options['hash_algo'], $digest);
     }
 
+    /**
+     * Returns true of both fingerprints are equal
+     */
     public function compare(Fingerprint $known, Fingerprint $fingerprint): bool
     {
         return hash_equals(
@@ -102,7 +107,8 @@ final class FingerprintReader
         );
     }
 
-    private function getDigest(string $string): ?string {
+    private function getDigest(string $string): ?string
+    {
         return hash_hmac(
             $this->options['hash_algo'],
             $string,

@@ -26,7 +26,7 @@ class FingerprintReaderTest extends TestCase
     public function testQueryStringIsSorted(string $expected, string $url, string $message = null)
     {
         $reader = new FingerprintReader([
-            'secret'    => '42',
+            'secret' => '42',
         ]);
         $urlHash = $reader->capture($url);
 
@@ -34,6 +34,28 @@ class FingerprintReaderTest extends TestCase
             $expected,
             $urlHash->getGist(),
             $message
+        );
+    }
+
+    public function testUrlEncodedChars()
+    {
+        $reader = new FingerprintReader([
+            'secret' => '42',
+            'hash_fragment' => true,
+        ]);
+        $urlHash1 = $reader->capture('http://example.com/x.html?string=With%20Space%2BPlus');
+        $urlHash2 = $reader->capture('http://example.com/x.html?string=With Space+Plus');
+
+        $this->assertSame(
+            $urlHash1->getGist(),
+            $urlHash2->getGist(),
+            'The fingerpint should honor special characters like %20 in the URL'
+        );
+
+        $this->assertSame(
+            $urlHash1->getDigest(),
+            $urlHash2->getDigest(),
+            'The digest should be same even if url contain characters which should be encoded like "%20"'
         );
     }
 
@@ -169,9 +191,9 @@ class FingerprintReaderTest extends TestCase
     public function testCompareFingerprintsShouldPassWithDifferentQueryParameterOrder()
     {
         $reader = new FingerprintReader([
-            'secret'        => '42',
-            'hash_algo'     => 'md5',
-            'hash_query'    => true,
+            'secret'     => '42',
+            'hash_algo'  => 'md5',
+            'hash_query' => true,
         ]);
         $urlHash1 = $reader->capture('https://www.example.com/foo/?ananas=baz&banana=qux&citrus');
         $urlHash2 = $reader->capture('https://www.example.com/foo/?citrus&banana=qux&ananas=baz');
@@ -186,9 +208,9 @@ class FingerprintReaderTest extends TestCase
     public function testCompareFingerprintsShouldFailWithDifferentQueryValues()
     {
         $reader = new FingerprintReader([
-            'secret'        => '42',
-            'hash_algo'     => 'md5',
-            'hash_query'    => true,
+            'secret'     => '42',
+            'hash_algo'  => 'md5',
+            'hash_query' => true,
         ]);
         $urlHash1 = $reader->capture('https://www.example.com/foo/?ananas=&banana=qux&citrus');
         $urlHash2 = $reader->capture('https://www.example.com/foo/?citrus&banana=qux&ananas=baz');
@@ -204,12 +226,12 @@ class FingerprintReaderTest extends TestCase
     {
         $this->expectException(InvalidOptionsException::class);
         new FingerprintReader([
-            'secret'        => '42',
-            'hash_algo'     => 'iDoNotExist',
+            'secret'    => '42',
+            'hash_algo' => 'iDoNotExist',
         ]);
     }
 
-    public function getUrlsWithQueryToSort()
+    public function getUrlsWithQueryToSort(): iterable
     {
         yield [
             '{"hash_scheme":"http","hash_userinfo":null,"hash_host":"example.com","hash_port":null,"hash_path":"","hash_query":null,"hash_fragment":null}',
@@ -295,7 +317,7 @@ class FingerprintReaderTest extends TestCase
     }
 
 
-    public function getHashOptionsAndExpectedUrls()
+    public function getHashOptionsAndExpectedUrls(): iterable
     {
         $url = 'https://user:hunter2@subdomain.example.com:42/path/to?zfoo=bar&qux=baz#anchor';
 

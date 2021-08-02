@@ -38,5 +38,4 @@ final class FingerprintOptionsResolver extends OptionsResolver
             })
             ->allowedTypes('string');
     }
-
 }
