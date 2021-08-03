@@ -107,12 +107,18 @@ final class FingerprintReader
         );
     }
 
-    private function createDigest(string $string): ?string
+    private function createDigest(string $string): string
     {
-        return hash_hmac(
+        $digest = hash_hmac(
             $this->options['hash_algo'],
             $string,
             $this->options['secret']
-        ) ?: null;
+        );
+
+        if (null === $digest) {
+            throw InvalidHashAlgorithm::unknownAlgorithm($this->options['hash_algo']);
+        }
+
+        return $digest;
     }
 }
