@@ -87,13 +87,13 @@ class FingerprintOptionsResolverTest extends TestCase
     public function getBooleanOptions(): iterable
     {
         return [
-            ['hash_scheme'],
-            ['hash_userinfo'],
-            ['hash_host'],
-            ['hash_port'],
-            ['hash_path'],
-            ['hash_query'],
-            ['hash_fragment'],
+            ['ignore_scheme'],
+            ['ignore_userinfo'],
+            ['ignore_host'],
+            ['ignore_port'],
+            ['ignore_path'],
+            ['ignore_query'],
+            ['ignore_fragment'],
         ];
     }
 }

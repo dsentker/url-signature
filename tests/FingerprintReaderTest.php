@@ -26,7 +26,9 @@ class FingerprintReaderTest extends TestCase
     public function testQueryStringIsSorted(string $expected, string $url, string $message = null)
     {
         $reader = new FingerprintReader([
-            'secret' => '42',
+            'secret'          => '42',
+            'ignore_port'     => true,
+            'ignore_fragment' => true,
         ]);
         $urlHash = $reader->capture($url);
 
@@ -40,8 +42,8 @@ class FingerprintReaderTest extends TestCase
     public function testUrlEncodedCharacters()
     {
         $reader = new FingerprintReader([
-            'secret'        => '42',
-            'hash_fragment' => true,
+            'secret'          => '42',
+            'ignore_fragment' => false,
         ]);
         $urlHash1 = $reader->capture('http://example.com/x.html?string=With%20Space%2BPlus');
         $urlHash2 = $reader->capture('http://example.com/x.html?string=With Space+Plus');
@@ -93,9 +95,9 @@ class FingerprintReaderTest extends TestCase
         $this->expectException(InvalidUrl::class);
         $this->expectExceptionMessage('The scheme for url (//www.example.com) is missing!');
         $readerEnforcingScheme = new FingerprintReader([
-            'secret'      => '42',
-            'hash_algo'   => 'md5',
-            'hash_scheme' => true,
+            'secret'        => '42',
+            'hash_algo'     => 'md5',
+            'ignore_scheme' => false,
         ]);
         $readerEnforcingScheme->capture('//www.example.com');
     }
@@ -103,14 +105,14 @@ class FingerprintReaderTest extends TestCase
     public function testMissingScheme()
     {
         $reader = new FingerprintReader([
-            'secret'      => '42',
-            'hash_algo'   => 'md5',
-            'hash_scheme' => false,
+            'secret'        => '42',
+            'hash_algo'     => 'md5',
+            'ignore_scheme' => true,
         ]);
         $fingerprint = $reader->capture('//www.example.com');
 
         $this->assertEquals(
-            '{"hash_scheme":null,"hash_userinfo":null,"hash_host":"www.example.com","hash_port":null,"hash_path":"","hash_query":null,"hash_fragment":null}',
+            '{"scheme":null,"userinfo":null,"host":"www.example.com","port":null,"path":"","query":null,"fragment":null}',
             $fingerprint->gist
         );
     }
@@ -120,9 +122,9 @@ class FingerprintReaderTest extends TestCase
         $this->expectException(InvalidUrl::class);
         $this->expectExceptionMessage('The URL string is empty!');
         $fingerprintReader = new FingerprintReader([
-            'secret'      => '42',
-            'hash_algo'   => 'md5',
-            'hash_scheme' => true,
+            'secret'        => '42',
+            'hash_algo'     => 'md5',
+            'ignore_scheme' => false,
         ]);
         $fingerprintReader->capture('');
     }
@@ -130,15 +132,15 @@ class FingerprintReaderTest extends TestCase
     public function testEmptyCharactersSurroundingUrlWillNotAffectTheResult()
     {
         $reader = new FingerprintReader([
-            'secret'        => '42',
-            'hash_algo'     => 'md5',
-            'hash_scheme'   => true,
-            'hash_fragment' => true,
+            'secret'          => '42',
+            'hash_algo'       => 'md5',
+            'ignore_scheme'   => false,
+            'ignore_fragment' => false,
         ]);
         $urlHash = $reader->capture(' https://www.example.com/#anchor ');
 
         $this->assertEquals(
-            '{"hash_scheme":"https","hash_userinfo":null,"hash_host":"www.example.com","hash_port":null,"hash_path":"/","hash_query":null,"hash_fragment":"anchor"}',
+            '{"scheme":"https","userinfo":null,"host":"www.example.com","port":null,"path":"/","query":null,"fragment":"anchor"}',
             $urlHash->gist
         );
     }
@@ -148,9 +150,9 @@ class FingerprintReaderTest extends TestCase
         $this->expectException(InvalidUrl::class);
         $this->expectExceptionMessage('The uri `https://` is invalid for the `https` scheme.');
         $reader = new FingerprintReader([
-            'secret'      => '42',
-            'hash_algo'   => 'md5',
-            'hash_scheme' => true,
+            'secret'        => '42',
+            'hash_algo'     => 'md5',
+            'ignore_scheme' => false,
         ]);
         $reader->capture('https://');
     }
@@ -158,13 +160,13 @@ class FingerprintReaderTest extends TestCase
     public function testUrlPathWithWhitespace()
     {
         $reader = new FingerprintReader([
-            'secret'      => '42',
-            'hash_algo'   => 'md5',
-            'hash_scheme' => false,
+            'secret'        => '42',
+            'hash_algo'     => 'md5',
+            'ignore_scheme' => true,
         ]);
         $urlHash = $reader->capture('//example.com/foo bar/baz');
         $this->assertEquals(
-            '{"hash_scheme":null,"hash_userinfo":null,"hash_host":"example.com","hash_port":null,"hash_path":"/foo%20bar/baz","hash_query":null,"hash_fragment":null}',
+            '{"scheme":null,"userinfo":null,"host":"example.com","port":null,"path":"/foo%20bar/baz","query":null,"fragment":null}',
             $urlHash->gist
         );
     }
@@ -172,45 +174,56 @@ class FingerprintReaderTest extends TestCase
     public function testCompareFingerprints()
     {
         $reader = new FingerprintReader([
-            'secret'        => '42',
-            'hash_algo'     => 'md5',
-            'hash_scheme'   => false,
-            'hash_query'    => false,
-            'hash_fragment' => false,
+            'secret'          => '42',
+            'hash_algo'       => 'md5',
+            'ignore_scheme'   => true,
+            'ignore_query'    => true,
+            'ignore_fragment' => true,
         ]);
-        $urlHash1 = $reader->capture('http://www.example.com/foo/bar/?qux=baz');
-        $urlHash2 = $reader->capture('https://www.example.com/foo/bar/#anchor');
+        $fingerprint1 = $reader->capture('http://www.example.com/foo/bar/?qux=baz');
+        $fingerprint2 = $reader->capture('https://www.example.com/foo/bar/#anchor');
 
         $this->assertTrue(
-            $reader->compare($urlHash1, $urlHash2),
-            sprintf('Assert that gist %s%s equals gist %s%s.', PHP_EOL, $urlHash1->gist, PHP_EOL,
-                $urlHash2->gist)
+            $reader->compare($fingerprint1, $fingerprint2),
+            sprintf('Assert that gist %s%s (%s) equals gist %s%s (%s).',
+                PHP_EOL,
+                $fingerprint1->gist,
+                $fingerprint1->digest,
+                PHP_EOL,
+                $fingerprint2->gist,
+                $fingerprint2->digest
+            )
         );
     }
 
     public function testCompareFingerprintsShouldPassWithDifferentQueryParameterOrder()
     {
         $reader = new FingerprintReader([
-            'secret'     => '42',
-            'hash_algo'  => 'md5',
-            'hash_query' => true,
+            'secret'       => '42',
+            'hash_algo'    => 'md5',
+            'ignore_query' => false,
         ]);
         $urlHash1 = $reader->capture('https://www.example.com/foo/?ananas=baz&banana=qux&citrus');
         $urlHash2 = $reader->capture('https://www.example.com/foo/?citrus&banana=qux&ananas=baz');
 
         $this->assertTrue(
             $reader->compare($urlHash1, $urlHash2),
-            sprintf('Assert that gist %s%s equals gist %s%s.', PHP_EOL, $urlHash1->gist, PHP_EOL,
-                $urlHash2->gist)
+            sprintf('Assert that gist %s%s (%s) equals gist %s%s (%s).',
+                PHP_EOL,
+                $urlHash1->gist,
+                $urlHash1->digest,
+                PHP_EOL,
+                $urlHash2->gist,
+                $urlHash2->digest
+            )
         );
     }
 
     public function testCompareFingerprintsShouldFailWithDifferentQueryValues()
     {
         $reader = new FingerprintReader([
-            'secret'     => '42',
-            'hash_algo'  => 'md5',
-            'hash_query' => true,
+            'secret'    => '42',
+            'hash_algo' => 'md5',
         ]);
         $urlHash1 = $reader->capture('https://www.example.com/foo/?ananas=&banana=qux&citrus');
         $urlHash2 = $reader->capture('https://www.example.com/foo/?citrus&banana=qux&ananas=baz');
@@ -299,7 +312,7 @@ class FingerprintReaderTest extends TestCase
             ],
             [
                 'https://www.example.com/path?foo',
-                'https://www.example.com/path?foo&baz#fragment',
+                'https://www.example.com/path?foo&baz',
                 ['baz', true, 42, null,],
             ],
         ];
@@ -308,83 +321,83 @@ class FingerprintReaderTest extends TestCase
     public function getUrlsWithQueryToSort(): iterable
     {
         yield [
-            '{"hash_scheme":"http","hash_userinfo":null,"hash_host":"example.com","hash_port":null,"hash_path":"","hash_query":null,"hash_fragment":null}',
+            '{"scheme":"http","userinfo":null,"host":"example.com","port":null,"path":"","query":null,"fragment":null}',
             'http://example.com',
             'A URL without query string must not be sorted',
         ];
         yield [
-            '{"hash_scheme":"http","hash_userinfo":null,"hash_host":"example.com","hash_port":null,"hash_path":"","hash_query":null,"hash_fragment":null}',
+            '{"scheme":"http","userinfo":null,"host":"example.com","port":null,"path":"","query":null,"fragment":null}',
             'http://example.com?',
             'A question mark in URL (no slash) without query string should have no effect',
         ];
         yield [
-            '{"hash_scheme":"http","hash_userinfo":null,"hash_host":"example.com","hash_port":null,"hash_path":"/","hash_query":null,"hash_fragment":null}',
+            '{"scheme":"http","userinfo":null,"host":"example.com","port":null,"path":"/","query":null,"fragment":null}',
             'http://example.com/?',
             'A question mark in URL without query string should have no effect',
         ];
         yield [
-            '{"hash_scheme":"https","hash_userinfo":null,"hash_host":"example.com","hash_port":null,"hash_path":"/","hash_query":"foo=bar","hash_fragment":null}',
+            '{"scheme":"https","userinfo":null,"host":"example.com","port":null,"path":"/","query":"foo=bar","fragment":null}',
             'https://example.com/?foo=bar',
             'A URL with a single query key-value pair should not be sorted',
         ];
         // Sort is done properly / b=x&a=x will transform to a=x&b=x
         yield [
-            '{"hash_scheme":"https","hash_userinfo":null,"hash_host":"example.com","hash_port":null,"hash_path":"/","hash_query":"a=1337&b=42","hash_fragment":null}',
+            '{"scheme":"https","userinfo":null,"host":"example.com","port":null,"path":"/","query":"a=1337&b=42","fragment":null}',
             'https://example.com/?b=42&a=1337',
             'The query string keys should be sorted ASC.',
         ];
         yield [
-            '{"hash_scheme":"https","hash_userinfo":null,"hash_host":"example.com","hash_port":null,"hash_path":"/","hash_query":"a=1337&b=42","hash_fragment":null}',
+            '{"scheme":"https","userinfo":null,"host":"example.com","port":null,"path":"/","query":"a=1337&b=42","fragment":null}',
             'https://example.com/?a=1337&b=42',
             'Query string keys already sorted should not be sorted.',
         ];
         // a=x&b= will transform to a=x&b= (always keep equal sign)
         yield [
-            '{"hash_scheme":"https","hash_userinfo":null,"hash_host":"example.com","hash_port":null,"hash_path":"/","hash_query":"a=1337&b=","hash_fragment":null}',
+            '{"scheme":"https","userinfo":null,"host":"example.com","port":null,"path":"/","query":"a=1337&b=","fragment":null}',
             'https://example.com/?a=1337&b=',
             'Query parameters without value should be sorted normally.',
         ];
         // a=x&b will transform to a=x&b=
         yield [
-            '{"hash_scheme":"https","hash_userinfo":null,"hash_host":"example.com","hash_port":null,"hash_path":"/","hash_query":"a=1337&b=","hash_fragment":null}',
+            '{"scheme":"https","userinfo":null,"host":"example.com","port":null,"path":"/","query":"a=1337&b=","fragment":null}',
             'https://example.com/?a=1337&b',
             'Boolean Query parameters (?b instead of ?b=) should be handled properly. ',
         ];
         // a=1&b&a=2 will transform to a=1&a=2&b
         yield [
-            '{"hash_scheme":"https","hash_userinfo":null,"hash_host":"example.com","hash_port":null,"hash_path":"/","hash_query":"a=1337&a=42&b=x","hash_fragment":null}',
+            '{"scheme":"https","userinfo":null,"host":"example.com","port":null,"path":"/","query":"a=1337&a=42&b=x","fragment":null}',
             'https://example.com/?a=1337&b=x&a=42',
             'Expecting that no',
         ];
         yield [
-            '{"hash_scheme":"https","hash_userinfo":null,"hash_host":"example.com","hash_port":null,"hash_path":"/","hash_query":"a=1337&a=42&b=x","hash_fragment":null}',
+            '{"scheme":"https","userinfo":null,"host":"example.com","port":null,"path":"/","query":"a=1337&a=42&b=x","fragment":null}',
             'https://example.com/?a=42&b=x&a=1337',
             'Multiple occurences of query keys should be sorted properly.',
         ];
         // sorting is guaranteed with array keys
         yield [
-            '{"hash_scheme":"https","hash_userinfo":null,"hash_host":"example.com","hash_port":null,"hash_path":"/","hash_query":"a[]=b&a[]=x","hash_fragment":null}',
+            '{"scheme":"https","userinfo":null,"host":"example.com","port":null,"path":"/","query":"a[]=b&a[]=x","fragment":null}',
             'https://example.com/?a[]=x&a[]=b',
             'Array keys in query string should be sorted properly.',
         ];
         // Keep order with empty values
         yield [
-            '{"hash_scheme":"https","hash_userinfo":null,"hash_host":"example.com","hash_port":null,"hash_path":"/","hash_query":"a=&z=","hash_fragment":null}',
+            '{"scheme":"https","userinfo":null,"host":"example.com","port":null,"path":"/","query":"a=&z=","fragment":null}',
             'https://example.com/?z&a',
             'Array keys wihout values should be sorted properly.',
         ];
         yield [
-            '{"hash_scheme":"https","hash_userinfo":null,"hash_host":"example.com","hash_port":null,"hash_path":"/","hash_query":"a=-1&a=1","hash_fragment":null}',
+            '{"scheme":"https","userinfo":null,"host":"example.com","port":null,"path":"/","query":"a=-1&a=1","fragment":null}',
             'https://example.com/?a=1&a=-1',
             'Integer values should be handled properly',
         ];
         yield [
-            '{"hash_scheme":"https","hash_userinfo":null,"hash_host":"example.com","hash_port":null,"hash_path":"/","hash_query":null,"hash_fragment":null}',
+            '{"scheme":"https","userinfo":null,"host":"example.com","port":null,"path":"/","query":null,"fragment":null}',
             'https://example.com/#?foo=bar',
             'Irreglar query strings after hash sign must be ignored',
         ];
         yield [
-            '{"hash_scheme":"https","hash_userinfo":null,"hash_host":"example.com","hash_port":null,"hash_path":"/","hash_query":null,"hash_fragment":null}',
+            '{"scheme":"https","userinfo":null,"host":"example.com","port":null,"path":"/","query":null,"fragment":null}',
             'https://example.com/?#?foo=bar',
             'Irreglar query strings after hash sign must be ignored',
         ];
@@ -398,87 +411,87 @@ class FingerprintReaderTest extends TestCase
         $urls = [
             [
                 'opts'     => [
-                    'hash_scheme'   => true,
-                    'hash_userinfo' => false,
-                    'hash_host'     => false,
-                    'hash_port'     => false,
-                    'hash_path'     => false,
-                    'hash_query'    => false,
-                    'hash_fragment' => false,
+                    'ignore_scheme'   => false,
+                    'ignore_userinfo' => true,
+                    'ignore_host'     => true,
+                    'ignore_port'     => true,
+                    'ignore_path'     => true,
+                    'ignore_query'    => true,
+                    'ignore_fragment' => true,
                 ],
-                'expected' => '{"hash_scheme":"https","hash_userinfo":null,"hash_host":null,"hash_port":null,"hash_path":"","hash_query":null,"hash_fragment":null}',
+                'expected' => '{"scheme":"https","userinfo":null,"host":null,"port":null,"path":"","query":null,"fragment":null}',
             ],
             [
                 'opts'     => [
-                    'hash_scheme'   => true,
-                    'hash_userinfo' => true,
-                    'hash_host'     => false,
-                    'hash_port'     => false,
-                    'hash_path'     => false,
-                    'hash_query'    => false,
-                    'hash_fragment' => false,
+                    'ignore_scheme'   => false,
+                    'ignore_userinfo' => false,
+                    'ignore_host'     => true,
+                    'ignore_port'     => true,
+                    'ignore_path'     => true,
+                    'ignore_query'    => true,
+                    'ignore_fragment' => true,
                 ],
-                'expected' => '{"hash_scheme":"https","hash_userinfo":"user:hunter2","hash_host":null,"hash_port":null,"hash_path":"","hash_query":null,"hash_fragment":null}',
+                'expected' => '{"scheme":"https","userinfo":"user:hunter2","host":null,"port":null,"path":"","query":null,"fragment":null}',
             ],
             [
                 'opts'     => [
-                    'hash_scheme'   => true,
-                    'hash_userinfo' => true,
-                    'hash_host'     => true,
-                    'hash_port'     => false,
-                    'hash_path'     => false,
-                    'hash_query'    => false,
-                    'hash_fragment' => false,
+                    'ignore_scheme'   => false,
+                    'ignore_userinfo' => false,
+                    'ignore_host'     => false,
+                    'ignore_port'     => true,
+                    'ignore_path'     => true,
+                    'ignore_query'    => true,
+                    'ignore_fragment' => true,
                 ],
-                'expected' => '{"hash_scheme":"https","hash_userinfo":"user:hunter2","hash_host":"subdomain.example.com","hash_port":null,"hash_path":"","hash_query":null,"hash_fragment":null}',
+                'expected' => '{"scheme":"https","userinfo":"user:hunter2","host":"subdomain.example.com","port":null,"path":"","query":null,"fragment":null}',
             ],
             [
                 'opts'     => [
-                    'hash_scheme'   => true,
-                    'hash_userinfo' => true,
-                    'hash_host'     => true,
-                    'hash_port'     => true,
-                    'hash_path'     => false,
-                    'hash_query'    => false,
-                    'hash_fragment' => false,
+                    'ignore_scheme'   => false,
+                    'ignore_userinfo' => false,
+                    'ignore_host'     => false,
+                    'ignore_port'     => false,
+                    'ignore_path'     => true,
+                    'ignore_query'    => true,
+                    'ignore_fragment' => true,
                 ],
-                'expected' => '{"hash_scheme":"https","hash_userinfo":"user:hunter2","hash_host":"subdomain.example.com","hash_port":42,"hash_path":"","hash_query":null,"hash_fragment":null}',
+                'expected' => '{"scheme":"https","userinfo":"user:hunter2","host":"subdomain.example.com","port":42,"path":"","query":null,"fragment":null}',
             ],
             [
                 'opts'     => [
-                    'hash_scheme'   => true,
-                    'hash_userinfo' => true,
-                    'hash_host'     => true,
-                    'hash_port'     => true,
-                    'hash_path'     => true,
-                    'hash_query'    => false,
-                    'hash_fragment' => false,
+                    'ignore_scheme'   => false,
+                    'ignore_userinfo' => false,
+                    'ignore_host'     => false,
+                    'ignore_port'     => false,
+                    'ignore_path'     => false,
+                    'ignore_query'    => true,
+                    'ignore_fragment' => true,
                 ],
-                'expected' => '{"hash_scheme":"https","hash_userinfo":"user:hunter2","hash_host":"subdomain.example.com","hash_port":42,"hash_path":"/path/to","hash_query":null,"hash_fragment":null}',
+                'expected' => '{"scheme":"https","userinfo":"user:hunter2","host":"subdomain.example.com","port":42,"path":"/path/to","query":null,"fragment":null}',
             ],
             [
                 'opts'     => [
-                    'hash_scheme'   => true,
-                    'hash_userinfo' => true,
-                    'hash_host'     => true,
-                    'hash_port'     => true,
-                    'hash_path'     => true,
-                    'hash_query'    => true,
-                    'hash_fragment' => false,
+                    'ignore_scheme'   => false,
+                    'ignore_userinfo' => false,
+                    'ignore_host'     => false,
+                    'ignore_port'     => false,
+                    'ignore_path'     => false,
+                    'ignore_query'    => false,
+                    'ignore_fragment' => true,
                 ],
-                'expected' => '{"hash_scheme":"https","hash_userinfo":"user:hunter2","hash_host":"subdomain.example.com","hash_port":42,"hash_path":"/path/to","hash_query":"qux=baz&zfoo=bar","hash_fragment":null}',
+                'expected' => '{"scheme":"https","userinfo":"user:hunter2","host":"subdomain.example.com","port":42,"path":"/path/to","query":"qux=baz&zfoo=bar","fragment":null}',
             ],
             [
                 'opts'     => [
-                    'hash_scheme'   => false,
-                    'hash_userinfo' => true,
-                    'hash_host'     => true,
-                    'hash_port'     => true,
-                    'hash_path'     => true,
-                    'hash_query'    => true,
-                    'hash_fragment' => true,
+                    'ignore_scheme'   => true,
+                    'ignore_userinfo' => false,
+                    'ignore_host'     => false,
+                    'ignore_port'     => false,
+                    'ignore_path'     => false,
+                    'ignore_query'    => false,
+                    'ignore_fragment' => false,
                 ],
-                'expected' => '{"hash_scheme":null,"hash_userinfo":"user:hunter2","hash_host":"subdomain.example.com","hash_port":42,"hash_path":"/path/to","hash_query":"qux=baz&zfoo=bar","hash_fragment":"anchor"}',
+                'expected' => '{"scheme":null,"userinfo":"user:hunter2","host":"subdomain.example.com","port":42,"path":"/path/to","query":"qux=baz&zfoo=bar","fragment":"anchor"}',
             ],
         ];
 

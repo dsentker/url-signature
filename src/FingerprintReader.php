@@ -73,27 +73,28 @@ final class FingerprintReader
             throw InvalidUrl::syntaxError($error);
         }
 
-        if ($uri->getScheme() === null && $this->options['hash_scheme']) {
+        if ($uri->getScheme() === null && ! $this->options['ignore_scheme']) {
             throw InvalidUrl::schemeIsMissing($url);
         }
 
         $hashedParts = [];
 
         $urlPartsToCheck = [
-            'hash_scheme'   => fn(Uri $uri) => $uri->getScheme(),
-            'hash_userinfo' => fn(Uri $uri) => $uri->getUserInfo(),
-            'hash_host'     => fn(Uri $uri) => $uri->getHost(),
-            'hash_port'     => fn(Uri $uri) => $uri->getPort(),
-            'hash_path'     => fn(Uri $uri) => $uri->getPath(),
-            'hash_query'    => fn(Uri $uri) => $this->normalizeQueryString($uri, $queryParametersToIgnore),
-            'hash_fragment' => fn(Uri $uri) => $uri->getFragment(),
+            'ignore_scheme'   => fn(Uri $uri) => $uri->getScheme(),
+            'ignore_userinfo' => fn(Uri $uri) => $uri->getUserInfo(),
+            'ignore_host'     => fn(Uri $uri) => $uri->getHost(),
+            'ignore_port'     => fn(Uri $uri) => $uri->getPort(),
+            'ignore_path'     => fn(Uri $uri) => $uri->getPath(),
+            'ignore_query'    => fn(Uri $uri) => $this->normalizeQueryString($uri, $queryParametersToIgnore),
+            'ignore_fragment' => fn(Uri $uri) => $uri->getFragment(),
         ];
 
         foreach ($urlPartsToCheck as $option => $cb) {
-            $placeHolderValue = 'hash_path' === $option ? '' : null; // hash_path is never null!
-            $hashedParts[$option] = ($this->options[$option])
-                ? $cb($uri)
-                : $placeHolderValue;
+            $emptyValue = 'ignore_path' === $option ? '' : null; // ignore_path is never null!
+
+            $hashedParts[str_replace('ignore_', '', $option)] = ($this->options[$option])
+                ? $emptyValue
+                : $cb($uri);
         }
 
         $gist = $this->serializeUrlParts($hashedParts);

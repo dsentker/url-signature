@@ -10,13 +10,13 @@ final class FingerprintOptionsResolver extends OptionsResolver
     public function __construct()
     {
         $booleanOptionKeys = [
-            'hash_scheme'   => true,
-            'hash_userinfo' => true,
-            'hash_host'     => true,
-            'hash_port'     => false,
-            'hash_path'     => true,
-            'hash_query'    => true,
-            'hash_fragment' => false,
+            'ignore_scheme'   => false,
+            'ignore_userinfo' => false,
+            'ignore_host'     => false,
+            'ignore_port'     => false,
+            'ignore_path'     => false,
+            'ignore_query'    => false,
+            'ignore_fragment' => false,
         ];
 
         foreach ($booleanOptionKeys as $optionKey => $defaultValue) {

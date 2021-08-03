@@ -9,7 +9,7 @@ class FingerprintTest extends TestCase
 {
     public function testFingerprintIsStringable()
     {
-        $fingerprint = new Fingerprint('{"hash_scheme":"https","hash_userinfo":null,"hash_host":"www.example.com","hash_port":null,"hash_path":"/","hash_query":null,"hash_fragment":"anchor"}',
+        $fingerprint = new Fingerprint('{"ignore_scheme":"https","ignore_userinfo":null,"ignore_host":"www.example.com","ignore_port":null,"ignore_path":"/","ignore_query":null,"ignore_fragment":"anchor"}',
             'md5', '1337');
 
         $this->assertEquals('1337', $fingerprint->digest);
