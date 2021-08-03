@@ -12,7 +12,7 @@ URL, which contains the digest, the hash algorithm and the hashed parts of the U
 ## Basic Usage
 
 ```php
-$reader = new \UrlFingerprint\FingerprintReader([
+$reader = new FingerprintReader([
     'secret' => 's3cre7v4lu3',
 ]);
 $fingerprint1 = $reader->capture('http://www.example.com/info?id=42&details');
@@ -91,7 +91,18 @@ $fingerprint1 = $reader->capture('https://www.example.com/?foo');
 $fingerprint2 = $reader->capture('https://www.example.com/?foo#bar');
 
 // Fingerprints are not the same - The fragment part of the URL is taken into account. 
-$reader->compare($fingerprint1, $fingerprint2); // false 
+$reader->compare($fingerprint1, $fingerprint2); // false
+```
+
+```php
+// Define query string keys which should be ignored and pass it as 2nd argument in the capture method.
+$ignoreQuery = ['foo', 'baz'];
+
+$fingerprint1 = $reader->capture('https://www.example.com/detail');
+$fingerprint2 = $reader->capture('https://www.example.com/detail?foo=bar', $ignoreQuery);
+
+// Fingerprints are equal because the 'foo' parameter is ignored
+$reader->compare($fingerprint1, $fingerprint2); // true
 ```
 
 ## Testing

@@ -37,10 +37,10 @@ class FingerprintReaderTest extends TestCase
         );
     }
 
-    public function testUrlEncodedChars()
+    public function testUrlEncodedCharacters()
     {
         $reader = new FingerprintReader([
-            'secret' => '42',
+            'secret'        => '42',
             'hash_fragment' => true,
         ]);
         $urlHash1 = $reader->capture('http://example.com/x.html?string=With%20Space%2BPlus');
@@ -76,7 +76,7 @@ class FingerprintReaderTest extends TestCase
         );
     }
 
-    public function testHashIsValid()
+    public function testHashLengthIsValid()
     {
         $reader = new FingerprintReader([
             'secret'    => '42',
@@ -229,6 +229,80 @@ class FingerprintReaderTest extends TestCase
             'secret'    => '42',
             'hash_algo' => 'iDoNotExist',
         ]);
+    }
+
+    /**
+     * @dataProvider getUrlsWithQueryParametersToIgnore
+     */
+    public function testQueryParameterAreIgnored(string $expectedUrl, string $actualUrl, array $ignore)
+    {
+        $reader = new FingerprintReader([
+            'secret' => '42',
+        ]);
+
+        $expectedFingerprint = $reader->capture($expectedUrl);
+        $actualFingerprint = $reader->capture($actualUrl, $ignore);
+
+        $this->assertTrue($reader->compare($expectedFingerprint, $actualFingerprint),
+
+            sprintf('%s%s%s', $expectedFingerprint->gist, PHP_EOL, $actualFingerprint->gist)
+        );
+    }
+
+    public function getUrlsWithQueryParametersToIgnore()
+    {
+        return [
+            [
+                'https://www.example.com/path?foo=baz',
+                'https://www.example.com/path?foo=baz&qux=faz',
+                ['qux'],
+            ],
+            [
+                'https://www.example.com/path?',
+                'https://www.example.com/path?foo=baz&qux=faz',
+                ['foo', 'qux'],
+            ],
+            [
+                'https://www.example.com/path',
+                'https://www.example.com/path?foo=baz&qux=faz',
+                ['foo', 'qux'],
+            ],
+            [
+                'https://www.example.com/path?foo=baz',
+                'https://www.example.com/path?foo=baz&qux=faz&qux=faz2',
+                ['qux'],
+            ],
+            [
+                'https://www.example.com/path?foo=baz',
+                'https://www.example.com/path?foo=baz&qux[]=faz',
+                ['qux'],
+            ],
+            [
+                'https://www.example.com/path?foo=baz',
+                'https://www.example.com/path?foo=baz&qux[deep][nest]=faz',
+                ['qux'],
+            ],
+            [
+                'https://www.example.com/path?foo=baz',
+                'https://www.example.com/path?foo=baz&qux[][]=faz',
+                ['qux'],
+            ],
+            [
+                'https://www.example.com/path?foo=baz',
+                'https://www.example.com/path?foo=baz',
+                ['FOO'],
+            ],
+            [
+                'https://www.example.com/path?foo',
+                'https://www.example.com/path?foo&baz',
+                ['baz'],
+            ],
+            [
+                'https://www.example.com/path?foo',
+                'https://www.example.com/path?foo&baz#fragment',
+                ['baz', true, 42, null,],
+            ],
+        ];
     }
 
     public function getUrlsWithQueryToSort(): iterable

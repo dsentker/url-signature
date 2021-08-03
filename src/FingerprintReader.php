@@ -28,28 +28,39 @@ final class FingerprintReader
         return json_encode($parts, JSON_THROW_ON_ERROR | JSON_UNESCAPED_SLASHES);
     }
 
-    private function sortQuery(Uri $uri): ?string
+    private function normalizeQueryString(Uri $uri, array $queryParametersToIgnore = []): ?string
     {
         // Sort query string
         $queryArray = [];
         $queryString = null;
         if ($uri->getQuery()) {
-            foreach (Query::createFromUri($uri)->pairs() as $key => $value) {
-                $value = empty($value) ? '' : $value;
-                $queryArray[] = sprintf('%s=%s', $key, $value);
+            $pairs = Query::createFromUri($uri)->pairs();
+            foreach ($pairs as $key => $value) {
+                /*
+                 * Check if $key is not ignored. The key may contain array notation like foo[] or bar[2][x]. In this case,
+                 * ensure that the native name without array brackets is used for comparison. foo[] become foo
+                 * and bar[2][x] become bar.
+                 */
+                preg_match('#^(\w+)(\[.*])?$#', $key, $matches);
+                $normalizedKey = $matches[1] ?? $key;
+
+                if ( ! in_array($normalizedKey, $queryParametersToIgnore, true)) {
+                    $value = empty($value) ? '' : $value;
+                    $queryArray[] = sprintf('%s=%s', $key, $value);
+                }
             }
             sort($queryArray);
             $queryString = implode('&', $queryArray);
         }
 
-        return $queryString;
+        return $queryString ?: null;
     }
 
     /**
      * @throws InvalidUrl
      * @throws JsonException
      */
-    public function capture(string $url): Fingerprint
+    public function capture(string $url, array $queryParametersToIgnore = []): Fingerprint
     {
         $url = trim($url);
         if ($url === '') {
@@ -74,7 +85,7 @@ final class FingerprintReader
             'hash_host'     => fn(Uri $uri) => $uri->getHost(),
             'hash_port'     => fn(Uri $uri) => $uri->getPort(),
             'hash_path'     => fn(Uri $uri) => $uri->getPath(),
-            'hash_query'    => fn(Uri $uri) => $this->sortQuery($uri),
+            'hash_query'    => fn(Uri $uri) => $this->normalizeQueryString($uri, $queryParametersToIgnore),
             'hash_fragment' => fn(Uri $uri) => $uri->getFragment(),
         ];
 
