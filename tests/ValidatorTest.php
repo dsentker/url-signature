@@ -23,7 +23,7 @@ class ValidatorTest extends TestCase
     /** @var Validator */
     private $validator;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $config = HashConfigFactory::createAdvancedConfigurationWithFullHashFlags();
         $this->validator = new Validator($config);

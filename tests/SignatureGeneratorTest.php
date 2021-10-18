@@ -22,7 +22,7 @@ class SignatureGeneratorTest extends TestCase
     /** @var ConcreteSignatureGenerator */
     private $generator;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->generator = new ConcreteSignatureGenerator();
     }

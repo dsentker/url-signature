@@ -27,14 +27,14 @@ class BuilderTest extends TestCase
     /** @var Builder */
     private $builder;
 
-    public function __construct(?string $name = null, array $data = [], string $dataName = '')
+    public function __construct($name = null, array $data = [], $dataName = '')
     {
         parent::__construct($name, $data, $dataName);
         date_default_timezone_set(static::TIMEZONE);
     }
 
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $config = HashConfigFactory::createSimpleConfiguration();
         $this->builder = new Builder($config);
