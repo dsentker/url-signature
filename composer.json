@@ -22,7 +22,7 @@
     "phpstan/phpstan": "^0.12.2"
   },
   "require": {
-    "php": "^7.2",
+    "php": "^7.2 || ^8.0",
     "league/uri-query-parser": "^1.0",
     "league/uri-parser": "^1.4"
   },
