@@ -134,9 +134,8 @@ The library uses the URL functions of [thephpleague/uri](https://github.com/thep
 If you notice bugs, have general questions or want to implement a feature, you are welcome to collaborate.
 
 ### Roadmap
-- Drop support for PHP 7.2 (use 7.4 for legacy stuff and make a url-signature 2.x for PHP 8)
+- Drop support for PHP 7.2
 - Refactor the hash process, provide a solution for issue #3
-- Split this repository to two standalone versions: An URL/URI Hasher _and_ Validator…?
 
 ### Submitting bugs and feature requests
 Bugs and feature request are tracked on GitHub.
