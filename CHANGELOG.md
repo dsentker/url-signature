@@ -1,5 +1,8 @@
 # CHANGELOG #
 
+### 1.1.0
+* Added support for PHP8
+
 ### 1.0.10
 * Added typehint in array docblocks 
 * Small fixes for a better code style
