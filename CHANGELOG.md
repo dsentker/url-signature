@@ -1,7 +1,10 @@
 # CHANGELOG #
 
+### 1.2.0
+* PHP 8 Support
+
 ### 1.1.0
-* Added support for PHP8
+* Fix some issues with the ordering of query string parameters.
 
 ### 1.0.10
 * Added typehint in array docblocks 
