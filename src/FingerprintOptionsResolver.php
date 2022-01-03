@@ -6,7 +6,6 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 final class FingerprintOptionsResolver extends OptionsResolver
 {
-
     public function __construct()
     {
         $booleanOptionKeys = [
