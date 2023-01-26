@@ -1,4 +1,4 @@
-# CHANGELOG #
+# CHANGELOG
 
 ### 1.2.0
 * PHP 8 Support
